@@ -1,0 +1,48 @@
+.app-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-image: url('/assets/background_mobile.png');
+  background-size: 100% auto;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-color: #0a021e;
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+
+.app-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* =====================
+   RESPONSIVE
+   ===================== */
+@media (min-width: 768px) {
+  .app-wrapper {
+    background-size: contain;
+    background-position: center top;
+  }
+
+  .app-content {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-wrapper {
+    display: flex;
+    justify-content: center;
+    /* On large screens: background fills full width */
+    background-size: cover;
+    background-position: center top;
+  }
+
+  .app-content {
+    max-width: 680px;
+  }
+}
