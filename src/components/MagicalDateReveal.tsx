@@ -6,9 +6,15 @@ interface MagicalDateRevealProps {
   isVisible: boolean;
   onClose: () => void;
   date: string;
+  timeDisplay: string;
 }
 
-const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({ isVisible, onClose, date }) => {
+const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({
+  isVisible,
+  onClose,
+  date,
+  timeDisplay,
+}) => {
   useEffect(() => {
     const preventDefault = (e: Event) => e.preventDefault();
 
@@ -17,7 +23,6 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({ isVisible, onClos
       document.documentElement.style.overflow = 'hidden';
       document.body.style.height = '100%';
       document.documentElement.style.height = '100%';
-      // Prevent touch scroll on mobile
       window.addEventListener('touchmove', preventDefault, { passive: false });
     } else {
       document.body.style.overflow = 'unset';
@@ -34,6 +39,7 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({ isVisible, onClos
       window.removeEventListener('touchmove', preventDefault);
     };
   }, [isVisible]);
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -44,7 +50,6 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({ isVisible, onClos
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
-          {/* Particle Burst */}
           {[...Array(30)].map((_, i) => (
             <motion.div
               key={i}
@@ -54,9 +59,9 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({ isVisible, onClos
                 scale: [0, 1, 0],
                 x: (Math.random() - 0.5) * 400,
                 y: (Math.random() - 0.5) * 400,
-                rotate: Math.random() * 360
+                rotate: Math.random() * 360,
               }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              transition={{ duration: 1.5, ease: 'easeOut' }}
             />
           ))}
 
@@ -65,11 +70,11 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({ isVisible, onClos
             initial={{ scale: 0.5, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ type: "spring", damping: 15 }}
+            transition={{ type: 'spring', damping: 15 }}
           >
             <div className="magical-sparkle-icon">✦</div>
             <h2 className="magical-date-text">{date}</h2>
-            <p className="magical-time-text">6:15 AM - 7:15 AM</p>
+            <p className="magical-time-text">{timeDisplay}</p>
             <div className="magical-sparkle-icon">✦</div>
           </motion.div>
         </motion.div>

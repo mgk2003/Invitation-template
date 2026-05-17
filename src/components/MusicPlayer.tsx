@@ -1,24 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './MusicPlayer.css';
+import type { WeddingContent } from '../content';
 
-const MusicPlayer: React.FC = () => {
+interface MusicPlayerProps {
+  music: WeddingContent['music'];
+}
+
+const MusicPlayer: React.FC<MusicPlayerProps> = ({ music }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const togglePlay = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    
     const audio = audioRef.current;
     if (!audio) return;
-
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
     } else {
-      audio.play().then(() => {
-        setIsPlaying(true);
-      }).catch(err => {
-        console.error("Manual playback failed:", err);
+      audio.play().then(() => setIsPlaying(true)).catch(err => {
+        console.error('Manual playback failed:', err);
       });
     }
   };
@@ -27,17 +28,14 @@ const MusicPlayer: React.FC = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.volume = 0.7;
+    audio.volume = music.volume;
 
     const startOnInteraction = () => {
       if (audio && audio.paused) {
         audio.play().then(() => {
           setIsPlaying(true);
           removeListeners();
-        }).catch(() => {
-          // If it still fails (e.g. scroll didn't count as interaction in some browsers)
-          // we keep the listeners active
-        });
+        }).catch(() => {});
       }
     };
 
@@ -47,24 +45,18 @@ const MusicPlayer: React.FC = () => {
       window.removeEventListener('touchstart', startOnInteraction);
     };
 
-    // Listen for the first interaction (especially scroll)
     window.addEventListener('scroll', startOnInteraction, { passive: true });
     window.addEventListener('click', startOnInteraction, { once: true });
     window.addEventListener('touchstart', startOnInteraction, { once: true });
 
     return () => removeListeners();
-  }, []);
+  }, [music.volume]);
 
   return (
     <div className="music-player-fixed">
-      <audio 
-        ref={audioRef}
-        src="/bg-music.mp3" 
-        loop 
-        preload="auto"
-      />
-      <button 
-        className={`music-toggle-btn ${isPlaying ? 'is-playing' : 'is-paused'}`} 
+      <audio ref={audioRef} src={music.src} loop preload="auto" />
+      <button
+        className={`music-toggle-btn ${isPlaying ? 'is-playing' : 'is-paused'}`}
         onClick={togglePlay}
         type="button"
       >
@@ -80,12 +72,12 @@ const MusicPlayer: React.FC = () => {
             </svg>
           )}
         </div>
-        
+
         {isPlaying && (
           <div className="music-bars">
-            <div className="bar b1"></div>
-            <div className="bar b2"></div>
-            <div className="bar b3"></div>
+            <div className="bar b1" />
+            <div className="bar b2" />
+            <div className="bar b3" />
           </div>
         )}
       </button>

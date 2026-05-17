@@ -2,14 +2,17 @@ import React, { useMemo } from 'react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { useCountdown } from '../hooks/useCountdown';
 import './CountdownSection.css';
+import type { WeddingContent } from '../content';
 
 interface CountdownSectionProps {
-  targetDate?: string;
+  couple: WeddingContent['couple'];
+  countdownSection: WeddingContent['countdownSection'];
+  dates: WeddingContent['dates'];
 }
 
-const CountdownSection: React.FC<CountdownSectionProps> = ({ targetDate }) => {
+const CountdownSection: React.FC<CountdownSectionProps> = ({ couple, countdownSection, dates }) => {
   const { ref, isVisible } = useScrollAnimation(0.1);
-  const weddingDate = useMemo(() => new Date(targetDate || '2026-07-06T18:00:00'), [targetDate]);
+  const weddingDate = useMemo(() => new Date(dates.weddingDatetime), [dates.weddingDatetime]);
   const { days, hours, minutes, seconds } = useCountdown(weddingDate);
 
   const pad = (n: number) => String(n).padStart(2, '0');
@@ -20,10 +23,12 @@ const CountdownSection: React.FC<CountdownSectionProps> = ({ targetDate }) => {
         <div className="countdown-sparkle-top">✦</div>
 
         <div className="countdown-names-wrapper">
-          <h2 className="countdown-names-script">Naveen & Nandhini</h2>
+          <h2 className="countdown-names-script">
+            {couple.groomName} &amp; {couple.brideName}
+          </h2>
         </div>
 
-        <p className="countdown-getting-married">ARE GETTING MARRIED IN</p>
+        <p className="countdown-getting-married">{countdownSection.gettingMarriedText}</p>
 
         <div className="countdown-timer-magical">
           <div className="time-unit-magical">
@@ -48,9 +53,7 @@ const CountdownSection: React.FC<CountdownSectionProps> = ({ targetDate }) => {
         </div>
 
         <div className="countdown-message-wrapper">
-          <p className="countdown-message-text">
-            "Counting down the moments until we start our journey of forever. We can't wait to celebrate this magical day with you."
-          </p>
+          <p className="countdown-message-text">{countdownSection.message}</p>
         </div>
 
         <div className="countdown-sparkle-bottom">✦</div>

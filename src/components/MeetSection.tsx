@@ -1,26 +1,31 @@
 import React from 'react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import './MeetSection.css';
-
 import coupleImg from '../assets/couple.png';
+import type { WeddingContent } from '../content';
 
-const MeetSection: React.FC = () => {
+interface MeetSectionProps {
+  couple: WeddingContent['couple'];
+  meetSection: WeddingContent['meetSection'];
+}
+
+const MeetSection: React.FC<MeetSectionProps> = ({ couple, meetSection }) => {
   const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation(0.1);
   const { ref: coupleRef, isVisible: coupleVisible } = useScrollAnimation(0.1);
 
   return (
     <section className="meet-section">
       <div className={`meet-header ${headerVisible ? 'animate-in' : ''}`} ref={headerRef}>
-        <p className="meet-label-top">CELEBRATING OUR LOVE</p>
-        <h2 className="meet-title">The Couple</h2>
-        <div className="meet-divider-gold"></div>
+        <p className="meet-label-top">{meetSection.labelTop}</p>
+        <h2 className="meet-title">{meetSection.title}</h2>
+        <div className="meet-divider-gold" />
       </div>
 
       <div className={`couple-container ${coupleVisible ? 'animate-in' : ''}`} ref={coupleRef}>
         <div className="couple-portrait-wrapper">
           <div className="couple-frame-gold">
             <div className="couple-inner">
-              <img src={coupleImg} alt="Naveen and Nandhini" className="couple-photo" />
+              <img src={coupleImg} alt={couple.photoAlt} className="couple-photo" />
             </div>
           </div>
           <div className="couple-sparkle tl">✦</div>
@@ -28,10 +33,8 @@ const MeetSection: React.FC = () => {
         </div>
 
         <div className="couple-info">
-          <h3 className="couple-names-script">The Happy Couple</h3>
-          <p className="couple-bio">
-            "A journey of love that began with a beautiful 'Yes'. Together, we are excited to start this new chapter of our lives, hand in hand, forever."
-          </p>
+          <h3 className="couple-names-script">{meetSection.sectionHeading}</h3>
+          <p className="couple-bio">{meetSection.bio}</p>
         </div>
       </div>
     </section>

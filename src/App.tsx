@@ -11,21 +11,48 @@ import Footer from './components/Footer';
 import MusicPlayer from './components/MusicPlayer';
 import ScrollIndicator from './components/ScrollIndicator';
 
+// ─── Single import point for all content ─────────────────────
+// To load from an API in the future, replace this import with
+// a fetch/useEffect and pass the resolved data the same way.
+import content from './content';
+
 function App() {
   return (
     <div className="app-wrapper">
-      <MusicPlayer />
+      <MusicPlayer music={content.music} />
+
       {/* Content scrolls over background */}
       <div className="app-content">
-        <HeroSection />
+        <HeroSection
+          couple={content.couple}
+          hero={content.hero}
+          dates={content.dates}
+        />
         <CeremonySpacer />
-        <InviteCard />
-        <EventsSection />
-        <MeetSection />
-        <MessageSection />
-        <ThingsToKnow />
-        <CountdownSection targetDate="2026-07-06T06:15:00" />
-        <Footer />
+        <InviteCard
+          couple={content.couple}
+          inviteCard={content.inviteCard}
+          dates={content.dates}
+        />
+        <EventsSection events={content.events} />
+        <MeetSection
+          couple={content.couple}
+          meetSection={content.meetSection}
+        />
+        <MessageSection
+          couple={content.couple}
+          messageSection={content.messageSection}
+        />
+        <ThingsToKnow
+          thingsToKnow={content.thingsToKnow}
+          social={content.social}
+        />
+        <CountdownSection
+          couple={content.couple}
+          countdownSection={content.countdownSection}
+          dates={content.dates}
+        />
+        <Footer footer={content.footer} />
       </div>
       <ScrollIndicator />
     </div>

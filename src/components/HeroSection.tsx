@@ -3,10 +3,17 @@ import { motion } from 'framer-motion';
 import FloatingHearts from './FloatingHearts';
 import MagicalDateReveal from './MagicalDateReveal';
 import './HeroSection.css';
+import type { WeddingContent } from '../content';
 
-const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  couple: WeddingContent['couple'];
+  hero: WeddingContent['hero'];
+  dates: WeddingContent['dates'];
+}
+
+const HeroSection: React.FC<HeroSectionProps> = ({ couple, hero, dates }) => {
   const [isRevealVisible, setIsRevealVisible] = useState(false);
-  const weddingDate = "6 JULY 2026";
+
   return (
     <section className="hero-section">
       <FloatingHearts />
@@ -15,7 +22,7 @@ const HeroSection: React.FC = () => {
         className="hero-content"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
+        transition={{ duration: 1.2, ease: 'easeOut' }}
       >
         <motion.div
           className="hero-intro-wrapper"
@@ -23,31 +30,19 @@ const HeroSection: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.8 }}
         >
-          <span className="hero-intro-text">With joyful hearts, we invite you to witness our forever</span>
+          <span className="hero-intro-text">{hero.introText}</span>
           <div className="hero-intro-divider" />
         </motion.div>
 
-        {/* Magical Logo Section - Pure White Edition */}
+        {/* Magical Logo Section */}
         <motion.div
           className="hero-logo-container"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            duration: 2,
-            delay: 0.5,
-            ease: "easeOut",
-            type: "spring",
-            stiffness: 50
-          }}
+          transition={{ duration: 2, delay: 0.5, ease: 'easeOut', type: 'spring', stiffness: 50 }}
         >
-          <div className="logo-glow-effect"></div>
-
-          <img
-            src="/coupleLogo.png"
-            alt="Naveen & Nandhini Logo"
-            className="hero-couple-logo-white"
-          />
-
+          <div className="logo-glow-effect" />
+          <img src={couple.logoSrc} alt={couple.logoAlt} className="hero-couple-logo-white" />
           <div className="logo-sparkles">
             <span className="logo-sparkle s1">✦</span>
             <span className="logo-sparkle s2">✦</span>
@@ -73,7 +68,8 @@ const HeroSection: React.FC = () => {
       <MagicalDateReveal
         isVisible={isRevealVisible}
         onClose={() => setIsRevealVisible(false)}
-        date={weddingDate}
+        date={dates.weddingDateDisplay}
+        timeDisplay={dates.weddingTimeDisplay}
       />
     </section>
   );
