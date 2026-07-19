@@ -1,7 +1,9 @@
 import React from 'react';
+import './CeremonySpacer.css';
 
 const CeremonySpacer: React.FC = () => {
-  return <div style={{ height: '700px', width: '100%' }} />;
+  return <div className="ceremony-spacer" />;
 };
 
 export default CeremonySpacer;
+

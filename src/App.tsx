@@ -1,4 +1,5 @@
 import './App.css';
+import DesktopBackground from './components/DesktopBackground';
 import HeroSection from './components/HeroSection';
 import CeremonySpacer from './components/CeremonySpacer';
 import InviteCard from './components/InviteCard';
@@ -12,49 +13,54 @@ import MusicPlayer from './components/MusicPlayer';
 import ScrollIndicator from './components/ScrollIndicator';
 
 // ─── Single import point for all content ─────────────────────
-// To load from an API in the future, replace this import with
-// a fetch/useEffect and pass the resolved data the same way.
 import content from './content';
 
 function App() {
   return (
-    <div className="app-wrapper">
-      <MusicPlayer music={content.music} />
+    <div className="app-container">
+      {/* Dynamic luxury background for desktop screens */}
+      <DesktopBackground />
 
-      {/* Content scrolls over background */}
-      <div className="app-content">
-        <HeroSection
-          couple={content.couple}
-          hero={content.hero}
-          dates={content.dates}
-        />
-        <CeremonySpacer />
-        <InviteCard
-          couple={content.couple}
-          inviteCard={content.inviteCard}
-          dates={content.dates}
-        />
-        <EventsSection events={content.events} />
-        <MeetSection
-          couple={content.couple}
-          meetSection={content.meetSection}
-        />
-        <MessageSection
-          couple={content.couple}
-          messageSection={content.messageSection}
-        />
-        <ThingsToKnow
-          thingsToKnow={content.thingsToKnow}
-          social={content.social}
-        />
-        <CountdownSection
-          couple={content.couple}
-          countdownSection={content.countdownSection}
-          dates={content.dates}
-        />
-        <Footer footer={content.footer} />
+      {/* Main invitation mobile mockup frame */}
+      <div className="app-wrapper">
+        <div className="desktop-phone-notch" />
+        <MusicPlayer music={content.music} />
+
+        {/* Content scrolls over background */}
+        <div className="app-content">
+          <HeroSection
+            couple={content.couple}
+            hero={content.hero}
+            dates={content.dates}
+          />
+          <CeremonySpacer />
+          <InviteCard
+            couple={content.couple}
+            inviteCard={content.inviteCard}
+            dates={content.dates}
+          />
+          <EventsSection events={content.events} />
+          <MeetSection
+            couple={content.couple}
+            meetSection={content.meetSection}
+          />
+          <MessageSection
+            couple={content.couple}
+            messageSection={content.messageSection}
+          />
+          <ThingsToKnow
+            thingsToKnow={content.thingsToKnow}
+            social={content.social}
+          />
+          <CountdownSection
+            couple={content.couple}
+            countdownSection={content.countdownSection}
+            dates={content.dates}
+          />
+          <Footer footer={content.footer} />
+        </div>
+        <ScrollIndicator />
       </div>
-      <ScrollIndicator />
     </div>
   );
 }
