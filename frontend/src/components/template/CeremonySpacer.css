@@ -1,0 +1,10 @@
+.ceremony-spacer {
+  height: 700px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .ceremony-spacer {
+    height: 1400px;
+  }
+}

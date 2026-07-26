@@ -1,0 +1,142 @@
+.message-section {
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.message-card {
+  width: 100%;
+  max-width: 600px;
+  padding: 60px 40px;
+  background: transparent;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.message-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.message-sparkle-top,
+.message-sparkle-bottom {
+  font-size: 1.5rem;
+  color: #e8d5a3;
+  margin: 10px 0;
+  animation: sparkle-pulse 3s infinite alternate;
+}
+
+.message-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.15em;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.message-divider-ornate {
+  margin-bottom: 30px;
+}
+
+.message-content {
+  margin-bottom: 40px;
+}
+
+.message-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 20px;
+}
+
+.message-text.highlighted {
+  color: #e8d5a3;
+  font-weight: 500;
+}
+
+.message-signatures-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.signature-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to var(--dir, right), transparent, rgba(232, 213, 163, 0.4));
+  max-width: 60px;
+}
+
+.signature-line:last-child {
+  --dir: left;
+}
+
+.message-signatures {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.signature-name {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 2.5rem;
+  color: #ffffff;
+}
+
+.signature-amp {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  color: #e8d5a3;
+}
+
+.message-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.looking-forward-badge {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  color: #e8d5a3;
+  padding: 10px 20px;
+  border: 1px solid rgba(232, 213, 163, 0.3);
+  border-radius: 50px;
+  background: rgba(232, 213, 163, 0.05);
+}
+
+@keyframes sparkle-pulse {
+  from {
+    transform: scale(0.8) rotate(0deg);
+    opacity: 0.4;
+  }
+
+  to {
+    transform: scale(1.2) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .message-card {
+    padding: 40px 20px;
+  }
+
+  .signature-name {
+    font-size: 2rem;
+  }
+
+  .message-title {
+    font-size: 1.3rem;
+  }
+}

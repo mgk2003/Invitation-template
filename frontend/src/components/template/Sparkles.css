@@ -1,0 +1,15 @@
+.sparkles-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.sparkle-svg {
+  position: absolute;
+  pointer-events: none;
+  display: block;
+}
+
+.sparkles-content {
+  position: relative;
+  z-index: 1;
+}

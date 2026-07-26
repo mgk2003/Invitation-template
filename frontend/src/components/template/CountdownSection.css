@@ -1,0 +1,144 @@
+.countdown-section {
+  padding: 30px 20px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.countdown-card {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: transparent;
+  /* No background as requested */
+}
+
+.countdown-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.countdown-sparkle-top,
+.countdown-sparkle-bottom {
+  font-size: 1.8rem;
+  color: #e8d5a3;
+  margin: 15px 0;
+  animation: sparkle-pulse 3s infinite alternate;
+}
+
+.countdown-names-script {
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  font-weight: 400;
+  color: #ffffff;
+  margin-bottom: 10px;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.countdown-getting-married {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  color: #e8d5a3;
+  margin-bottom: 30px;
+}
+
+.countdown-timer-magical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+
+.time-unit-magical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 60px;
+}
+
+.time-number-glow {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(3.5rem, 12vw, 5rem);
+  font-weight: 100;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(232, 213, 163, 0.3);
+  animation: number-pulse 3s infinite ease-in-out;
+}
+
+.time-label-elegant {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: #e8d5a3;
+}
+
+.time-divider {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem;
+  font-weight: 100;
+  color: rgba(232, 213, 163, 0.4);
+  margin-top: -30px;
+}
+
+.countdown-message-wrapper {
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.countdown-message-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+}
+
+@keyframes number-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  to {
+    transform: scale(1.05);
+    opacity: 1;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes sparkle-pulse {
+  from {
+    transform: scale(0.8) rotate(0deg);
+    opacity: 0.4;
+  }
+
+  to {
+    transform: scale(1.2) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .countdown-names-script {
+    font-size: 2.8rem;
+  }
+
+  .countdown-timer-magical {
+    gap: 8px;
+  }
+
+  .time-unit-magical {
+    min-width: 50px;
+  }
+}

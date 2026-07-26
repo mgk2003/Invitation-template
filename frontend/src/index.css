@@ -1,0 +1,267 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+@import './template-index.css';
+@import './template-App.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0a0a0c;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Custom Ant Design dark theme overrides with Modern Slate & Violet Theme */
+.ant-table-wrapper .ant-table {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th {
+  background: #18181b !important;
+  color: #a78bfa !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.25) !important;
+}
+
+.ant-table-wrapper .ant-table-tbody > tr > td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.ant-table-wrapper .ant-table-tbody > tr:hover > td {
+  background: rgba(139, 92, 246, 0.08) !important;
+}
+
+.ant-collapse {
+  background: #18181b !important;
+  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+.ant-collapse-item {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2) !important;
+}
+
+.ant-collapse-header {
+  background: linear-gradient(135deg, rgba(24, 24, 27, 0.95), rgba(18, 18, 18, 0.95)) !important;
+  color: #a78bfa !important;
+  padding: 16px 20px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.ant-collapse-header:hover {
+  background: linear-gradient(135deg, rgba(39, 39, 42, 0.95), rgba(24, 24, 27, 0.95)) !important;
+  color: #ffffff !important;
+}
+
+.ant-collapse-content {
+  background: #090a0f !important;
+  border-top: 1px solid rgba(139, 92, 246, 0.2) !important;
+  color: #e2e8f0 !important;
+}
+
+.ant-card {
+  background: #18181b !important;
+  border: 1px solid rgba(139, 92, 246, 0.25) !important;
+  border-radius: 12px !important;
+  color: white !important;
+}
+
+.ant-card-meta-title {
+  color: #a78bfa !important;
+}
+
+.ant-form-item-label > label {
+  color: #a78bfa !important;
+  font-weight: 500 !important;
+  font-size: 0.825rem !important;
+  letter-spacing: 0.025em !important;
+}
+
+.ant-input,
+.ant-input-password,
+.ant-input-number,
+.ant-select-selector,
+.ant-picker {
+  background-color: #090a0f !important;
+  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.ant-input:hover,
+.ant-input-password:hover,
+.ant-input-number:hover,
+.ant-select-selector:hover,
+.ant-picker:hover {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.25) !important;
+}
+
+.ant-input:focus,
+.ant-input-focused,
+.ant-select-focused .ant-select-selector,
+.ant-picker-focused {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 14px rgba(167, 139, 250, 0.35) !important;
+}
+
+.ant-input-group-addon {
+  background-color: #18181b !important;
+  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  color: #a78bfa !important;
+}
+
+.ant-picker-input > input {
+  color: #ffffff !important;
+}
+
+.ant-select-selection-item {
+  color: #ffffff !important;
+}
+
+.ant-slider-rail {
+  background-color: #27272a !important;
+}
+
+.ant-slider-track {
+  background: linear-gradient(90deg, #6d28d9, #8b5cf6) !important;
+}
+
+.ant-slider-handle::after {
+  box-shadow: 0 0 0 2px #8b5cf6 !important;
+  background-color: #a78bfa !important;
+}
+
+.ant-modal-content {
+  background-color: #18181b !important;
+  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  color: white !important;
+}
+
+.ant-drawer-content {
+  background-color: #090a0f !important;
+  color: white !important;
+}
+
+/* Custom range slider styling */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #27272a;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #8b5cf6;
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #a78bfa;
+}
+
+/* Custom dashboard scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #090a0f;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Premium UI Glow Effects & Animations */
+.glow-border-violet {
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 0 4px 20px -2px rgba(139, 92, 246, 0.15) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glow-border-violet:hover {
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 4px 25px rgba(139, 92, 246, 0.3) !important;
+}
+
+.glow-border-emerald {
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.15) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glow-border-emerald:hover {
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  box-shadow: 0 4px 25px rgba(16, 185, 129, 0.3) !important;
+}
+
+.glow-border-amber {
+  border: 1px solid rgba(245, 158, 11, 0.2) !important;
+  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.15) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glow-border-amber:hover {
+  border-color: rgba(245, 158, 11, 0.5) !important;
+  box-shadow: 0 4px 25px rgba(245, 158, 11, 0.3) !important;
+}
+
+.glass-panel {
+  background: rgba(24, 24, 27, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Ant Design validation message style enhancements */
+.ant-form-item-explain-error {
+  color: #f43f5e !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  margin-top: 4px !important;
+  animation: fadeInDown 0.2s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom animated progress bar styling */
+.progress-bar-glow {
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+  background: linear-gradient(90deg, #8b5cf6, #ec4899);
+}
+
+/* Glass inputs focus styles */
+.glass-input-glow:focus-within {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2) !important;
+}
+
+

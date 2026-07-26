@@ -1,0 +1,133 @@
+.invite-section {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+}
+
+.invite-card {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  background: transparent;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+}
+
+.invite-card.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+.invite-content-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.invite-love-message {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  font-weight: 300;
+  color: #e8d5a3;
+  line-height: 1.6;
+  margin: 20px 0;
+  padding: 0 10px;
+  opacity: 0.9;
+}
+
+.invite-divider-gold {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e8d5a3, transparent);
+  margin: 25px auto;
+}
+
+.invite-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: #ffffff;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+.invite-names {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 30px;
+}
+
+.invite-name-script {
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  color: #ffffff;
+  font-weight: 400;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+}
+
+.invite-ampersand-stylish {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-style: italic;
+  color: #e8d5a3;
+  margin: -10px 0;
+}
+
+.invite-details-box {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.invite-save-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: #e8d5a3;
+  margin-bottom: 10px;
+}
+
+.invite-date-main {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+}
+
+.invite-event-footer {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: #c4b0d8;
+  text-transform: uppercase;
+  margin-top: 30px;
+}
+
+.invite-sparkle-top,
+.invite-sparkle-bottom {
+  font-size: 1.5rem;
+  color: #e8d5a3;
+  animation: pulse-sparkle 3s infinite alternate;
+}
+
+@keyframes pulse-sparkle {
+  from {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}

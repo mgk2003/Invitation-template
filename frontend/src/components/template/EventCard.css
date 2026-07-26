@@ -1,0 +1,109 @@
+.event-card-magical {
+  flex: 1;
+  padding: 15px;
+  text-align: center;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.event-card-magical.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.event-sparkle-top,
+.event-sparkle-bottom {
+  font-size: 1.5rem;
+  color: #e8d5a3;
+  animation: sparkle-pulse 3s infinite alternate;
+}
+
+.event-title-cinzel {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.event-info-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e8d5a3, transparent);
+  margin: 0 auto 20px;
+}
+
+.event-date-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e8d5a3;
+  letter-spacing: 0.1em;
+  margin-bottom: 5px;
+}
+
+.event-time-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 200;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.event-venue-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+  margin-bottom: 25px;
+  line-height: 1.4;
+}
+
+.event-map-btn {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: #e8d5a3;
+  text-decoration: none;
+  padding: 10px 24px;
+  border: 1px solid rgba(232, 213, 163, 0.3);
+  border-radius: 50px;
+  background: rgba(232, 213, 163, 0.05);
+  transition: all 0.3s ease;
+}
+
+.event-map-btn:hover {
+  background: rgba(232, 213, 163, 0.15);
+  border-color: #e8d5a3;
+  transform: scale(1.05);
+}
+
+@keyframes sparkle-pulse {
+  from {
+    transform: scale(0.8) rotate(0deg);
+    opacity: 0.4;
+  }
+
+  to {
+    transform: scale(1.2) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-title-cinzel {
+    font-size: 1.5rem;
+  }
+}
