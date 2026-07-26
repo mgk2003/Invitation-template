@@ -96,7 +96,7 @@ export const PublicInvitation: React.FC = () => {
             countdownSection={content.countdownSection}
             dates={content.dates}
           />
-          <Footer footer={content.footer} />
+          <Footer footer={content.footer} couple={content.couple} />
         </div>
         <ScrollIndicator />
       </div>

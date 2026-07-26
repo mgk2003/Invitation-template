@@ -23,10 +23,10 @@ export class PublishCoupleDto {
   @IsNotEmpty()
   brideName: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
-  @IsNotEmpty()
-  logoSrc: string;
+  @IsOptional()
+  logoSrc?: string;
 
   @ApiProperty()
   @IsString()
@@ -223,6 +223,16 @@ export class PublishSocialDto {
   @IsString()
   @IsNotEmpty()
   instagramLink: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  instagramHandle2?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  instagramLink2?: string;
 }
 
 export class PublishFooterDto {

@@ -55,7 +55,12 @@ const ThingsToKnow: React.FC<ThingsToKnowProps> = ({ thingsToKnow, social }) => 
         </AnimatePresence>
       </div>
 
-      <InstagramBlock handle={social.instagramHandle} link={social.instagramLink} />
+      <div className="social-instagram-wrapper">
+        <InstagramBlock handle={social.instagramHandle} link={social.instagramLink} />
+        {social.instagramHandle2 && social.instagramLink2 && (
+          <InstagramBlock handle={social.instagramHandle2} link={social.instagramLink2} />
+        )}
+      </div>
     </section>
   );
 };

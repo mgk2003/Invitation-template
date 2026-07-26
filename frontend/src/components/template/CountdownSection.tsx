@@ -64,11 +64,14 @@ const CountdownSection: React.FC<CountdownSectionProps> = ({ couple, countdownSe
           </div>
         )}
 
-        <div className="countdown-message-wrapper">
-          <p className="countdown-message-text">{countdownSection.message}</p>
-        </div>
-
-        <div className="countdown-sparkle-bottom">✦</div>
+        {!isCompleted && (
+          <>
+            <div className="countdown-message-wrapper">
+              <p className="countdown-message-text">{countdownSection.message}</p>
+            </div>
+            <div className="countdown-sparkle-bottom">✦</div>
+          </>
+        )}
       </div>
     </section>
   );

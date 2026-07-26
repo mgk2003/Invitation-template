@@ -219,3 +219,24 @@
   border-color: #e8d5a3;
   transform: scale(1.02);
 }
+
+.social-instagram-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .social-instagram-wrapper {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .instagram-premium-card {
+    flex: 1;
+    max-width: 450px;
+  }
+}

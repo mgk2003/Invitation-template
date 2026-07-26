@@ -15,8 +15,8 @@ export interface TipItem {
 export interface Couple {
   groomName: string;
   brideName: string;
-  logoSrc: string;
-  logoAlt: string;
+  logoSrc?: string;
+  logoAlt?: string;
   photoSrc?: string;
   photoAlt: string;
 }
@@ -67,6 +67,8 @@ export interface ThingsToKnow {
 export interface Social {
   instagramHandle: string;
   instagramLink: string;
+  instagramHandle2?: string;
+  instagramLink2?: string;
 }
 
 export interface Footer {
@@ -98,4 +100,5 @@ export interface WeddingContent {
   music: Music;
   createdAt?: string;
   updatedAt?: string;
+  views?: number;
 }

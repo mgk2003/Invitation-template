@@ -14,11 +14,13 @@ interface HeroSectionProps {
 const HeroSection: React.FC<HeroSectionProps> = ({ couple, hero, dates }) => {
   const [isRevealVisible, setIsRevealVisible] = useState(false);
 
-  const logoUrl = couple?.logoSrc
-    ? couple.logoSrc.startsWith('http') || couple.logoSrc.startsWith('blob:')
-      ? couple.logoSrc
-      : `${couple.logoSrc.startsWith('/') ? '' : '/'}${couple.logoSrc}`
-    : '/coupleLogo.png';
+  const logoSrc = couple?.logoSrc;
+  const hasLogo = !!(logoSrc && logoSrc.trim() !== '');
+  const logoUrl = logoSrc && hasLogo
+    ? logoSrc.startsWith('http') || logoSrc.startsWith('blob:')
+      ? logoSrc
+      : `${logoSrc.startsWith('/') ? '' : '/'}${logoSrc}`
+    : '';
 
   return (
     <section className="hero-section">
@@ -48,7 +50,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({ couple, hero, dates }) => {
           transition={{ duration: 2, delay: 0.5, ease: 'easeOut', type: 'spring', stiffness: 50 }}
         >
           <div className="logo-glow-effect" />
-          <img src={logoUrl} alt={couple.logoAlt} className="hero-couple-logo-white" />
+          {hasLogo ? (
+            <img src={logoUrl} alt={couple.logoAlt || 'Couple Logo'} className="hero-couple-logo-white" />
+          ) : (
+            <div className="hero-couple-names-text">
+              <span className="groom-name">{couple?.groomName}</span>
+              <span className="and-symbol">&</span>
+              <span className="bride-name">{couple?.brideName}</span>
+            </div>
+          )}
           <div className="logo-sparkles">
             <span className="logo-sparkle s1">✦</span>
             <span className="logo-sparkle s2">✦</span>

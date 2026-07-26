@@ -8,6 +8,7 @@ import {
   Param,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -30,8 +31,9 @@ export class InvitationController {
 
   @Get('public/:slug')
   @ApiOperation({ summary: 'Get public invitation details by slug' })
-  async getPublicInvitation(@Param('slug') slug: string) {
-    return this.invitationService.findPublicBySlug(slug);
+  async getPublicInvitation(@Param('slug') slug: string, @Req() request: any) {
+    const ip = request.ip || request.headers['x-forwarded-for'] || request.socket.remoteAddress;
+    return this.invitationService.findPublicBySlug(slug, ip);
   }
 
   @Get('invitations')

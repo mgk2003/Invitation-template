@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from 'antd';
 
-export function showApiErrorModal(title: string, err: any) {
+export function showApiErrorModal(title: string, err: any, onClose?: () => void) {
   let errorMessages: string[] = [];
 
   const apiMessage = err?.data?.message || err?.response?.data?.message || err?.message;
@@ -30,6 +30,12 @@ export function showApiErrorModal(title: string, err: any) {
     width: 560,
     centered: true,
     maskClosable: true,
+    onOk() {
+      if (onClose) onClose();
+    },
+    onCancel() {
+      if (onClose) onClose();
+    },
     content: (
       <div className="mt-3 space-y-3">
         <p className="text-xs text-gray-300 font-medium">

@@ -10,6 +10,7 @@ const { TextArea } = Input;
 // 1. Date & DateTime Picker Component
 // ==========================================
 interface AppDatePickerProps {
+  id?: string;
   type?: 'date' | 'datetime';
   value?: any;
   onChange?: (val: any) => void;
@@ -18,6 +19,7 @@ interface AppDatePickerProps {
 }
 
 export const AppDatePicker: React.FC<AppDatePickerProps> = ({
+  id,
   type = 'datetime',
   value,
   onChange,
@@ -29,12 +31,14 @@ export const AppDatePicker: React.FC<AppDatePickerProps> = ({
 
   return (
     <DatePicker
+      id={id}
       showTime={type === 'datetime'}
       format={type === 'datetime' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'}
       value={dayjsValue}
       onChange={(date) => onChange?.(date || null)}
       disabled={disabled}
-      className={`w-full bg-[#151824] border-gray-700 text-white min-h-[42px] flex items-center ${className}`}
+      size="large"
+      className={`w-full bg-[#151824] border-gray-700 text-white flex items-center ${className}`}
     />
   );
 };
@@ -48,6 +52,7 @@ interface Option {
 }
 
 interface AppSelectProps {
+  id?: string;
   options: Option[];
   value?: any;
   onChange?: (val: any) => void;
@@ -58,6 +63,7 @@ interface AppSelectProps {
 }
 
 export const AppSelect: React.FC<AppSelectProps> = ({
+  id,
   options = [],
   value,
   onChange,
@@ -68,13 +74,15 @@ export const AppSelect: React.FC<AppSelectProps> = ({
 }) => {
   return (
     <Select
+      id={id}
       options={options}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
       allowClear={allowClear}
       disabled={disabled}
-      className={`w-full min-h-[42px] ${className}`}
+      size="large"
+      className={`w-full ${className}`}
       popupClassName="bg-zinc-900 border border-zinc-800"
     />
   );
@@ -193,6 +201,7 @@ export const AppFileUploader: React.FC<AppFileUploaderProps> = ({
 // 4. Slider Component
 // ==========================================
 interface AppSliderProps {
+  id?: string;
   value?: number;
   onChange?: (val: number) => void;
   min?: number;
@@ -202,6 +211,7 @@ interface AppSliderProps {
 }
 
 export const AppSlider: React.FC<AppSliderProps> = ({
+  id,
   value = 0.5,
   onChange,
   min = 0,
@@ -212,6 +222,7 @@ export const AppSlider: React.FC<AppSliderProps> = ({
   return (
     <div className="w-full flex items-center gap-3">
       <Slider
+        id={id}
         min={min}
         max={max}
         step={step}
@@ -231,6 +242,7 @@ export const AppSlider: React.FC<AppSliderProps> = ({
 // 5. Main Dispatcher Component (AppInput)
 // ==========================================
 interface AppInputProps {
+  id?: string;
   type: 'text' | 'textarea' | 'password' | 'number' | 'date' | 'datetime' | 'select' | 'file' | 'slider';
   value?: any;
   onChange?: (val: any) => void;
@@ -249,6 +261,7 @@ interface AppInputProps {
 
 export const AppInput: React.FC<AppInputProps> = (props) => {
   const {
+    id,
     type,
     value,
     onChange,
@@ -269,6 +282,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     case 'textarea':
       return (
         <TextArea
+          id={id}
           value={value || ''}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
@@ -281,10 +295,12 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     case 'password':
       return (
         <Input.Password
+          id={id}
           value={value || ''}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
+          size="large"
           className={`w-full bg-[#151824] border-gray-700 text-white font-sans ${className}`}
         />
       );
@@ -292,6 +308,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     case 'number':
       return (
         <InputNumber
+          id={id}
           value={value}
           onChange={(val) => onChange?.(val)}
           placeholder={placeholder}
@@ -299,6 +316,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
           min={min}
           max={max}
           step={step}
+          size="large"
           className={`w-full bg-[#151824] border-gray-700 text-white font-sans ${className}`}
         />
       );
@@ -306,6 +324,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     case 'date':
       return (
         <AppDatePicker
+          id={id}
           type="date"
           value={value}
           onChange={onChange}
@@ -317,6 +336,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     case 'datetime':
       return (
         <AppDatePicker
+          id={id}
           type="datetime"
           value={value}
           onChange={onChange}
@@ -328,6 +348,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     case 'select':
       return (
         <AppSelect
+          id={id}
           options={options}
           value={value}
           onChange={onChange}
@@ -352,6 +373,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     case 'slider':
       return (
         <AppSlider
+          id={id}
           value={value}
           onChange={onChange}
           min={min}
@@ -365,11 +387,13 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     default:
       return (
         <Input
+          id={id}
           value={value || ''}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
           addonBefore={addonBefore}
+          size="large"
           className={`w-full bg-[#151824] border-gray-700 text-white placeholder-gray-500 font-sans ${className}`}
         />
       );

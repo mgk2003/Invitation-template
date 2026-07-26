@@ -324,6 +324,7 @@ export const AdminDashboard: React.FC = () => {
                     Wedding Date {renderSortIndicator('weddingDate')}
                   </th>
                   <th className="py-4 px-6">Status</th>
+                  <th className="py-4 px-6">Views</th>
                   <th className="py-4 px-6">Public Link</th>
                   <th
                     className="py-4 px-6 cursor-pointer hover:text-white transition-colors"
@@ -337,7 +338,7 @@ export const AdminDashboard: React.FC = () => {
               <tbody className="divide-y divide-zinc-800/80">
                 {(!data?.items || data.items.length === 0) ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-10 text-zinc-500 text-sm">
+                    <td colSpan={8} className="text-center py-10 text-zinc-500 text-sm">
                       No invitations found.
                     </td>
                   </tr>
@@ -384,6 +385,14 @@ export const AdminDashboard: React.FC = () => {
                                 onChange={() => handleStatusToggle(record)}
                               />
                             )}
+                          </div>
+                        </td>
+
+                        {/* Views */}
+                        <td className="py-4.5 px-6">
+                          <div className="flex items-center gap-1.5 text-sm font-semibold text-zinc-300 font-mono">
+                            <FiEye className="text-zinc-500 text-base" />
+                            <span>{record.views || 0}</span>
                           </div>
                         </td>
 

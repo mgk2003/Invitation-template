@@ -18,10 +18,10 @@ export class Couple {
   @Prop({ required: true })
   brideName: string;
 
-  @Prop({ default: '/coupleLogo.png' })
+  @Prop({ default: '' })
   logoSrc: string;
 
-  @Prop({ default: 'Couple Logo' })
+  @Prop({ default: '' })
   logoAlt: string;
 
   @Prop({ default: '' })
@@ -155,6 +155,12 @@ export class Social {
 
   @Prop({ default: '' })
   instagramLink: string;
+
+  @Prop({ default: '' })
+  instagramHandle2?: string;
+
+  @Prop({ default: '' })
+  instagramLink2?: string;
 }
 
 @Schema({ _id: false })
@@ -215,6 +221,15 @@ export class Invitation {
 
   @Prop({ type: Music, default: () => ({}) })
   music: Music;
+
+  @Prop({ default: 0 })
+  views: number;
+
+  @Prop({
+    type: [{ ip: { type: String }, timestamp: { type: Date } }],
+    default: [],
+  })
+  viewLogs: { ip: string; timestamp: Date }[];
 }
 
 export const InvitationSchema = SchemaFactory.createForClass(Invitation);

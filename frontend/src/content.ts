@@ -95,6 +95,8 @@ const defaultContent: WeddingContent = {
     instagramHandle: '@_crewfotos_',
     instagramLink:
       'https://www.instagram.com/_crewfotos_?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
+    instagramHandle2: '',
+    instagramLink2: '',
   },
 
   footer: {

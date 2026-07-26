@@ -103,10 +103,19 @@ export class InvitationService {
       dto.dates = this.formatDefaultDates(dto.dates);
     }
 
+    const now = new Date();
+    let status = InvitationStatus.ACTIVE;
+    if (dto.dates?.weddingDatetime) {
+      const weddingDate = new Date(dto.dates.weddingDatetime);
+      if (!isNaN(weddingDate.getTime()) && weddingDate < now) {
+        status = InvitationStatus.COMPLETED;
+      }
+    }
+
     const newInvitation = new this.invitationModel({
       ...dto,
       slug: dto.slug.toLowerCase().trim(),
-      status: InvitationStatus.ACTIVE,
+      status,
     });
 
     return newInvitation.save();
@@ -131,6 +140,7 @@ export class InvitationService {
 
     Object.assign(invitation, dto);
     if (dto.slug) invitation.slug = dto.slug.toLowerCase().trim();
+    invitation.status = InvitationStatus.DRAFT;
 
     return invitation.save();
   }
@@ -152,8 +162,18 @@ export class InvitationService {
       dto.dates = this.formatDefaultDates(dto.dates);
     }
 
+    const now = new Date();
+    let status = InvitationStatus.ACTIVE;
+    if (dto.dates?.weddingDatetime) {
+      const weddingDate = new Date(dto.dates.weddingDatetime);
+      if (!isNaN(weddingDate.getTime()) && weddingDate < now) {
+        status = InvitationStatus.COMPLETED;
+      }
+    }
+
     Object.assign(invitation, dto);
     if (dto.slug) invitation.slug = dto.slug.toLowerCase().trim();
+    invitation.status = status;
 
     return invitation.save();
   }
@@ -270,7 +290,7 @@ export class InvitationService {
     return invitation;
   }
 
-  async findPublicBySlug(slug: string): Promise<Invitation> {
+  async findPublicBySlug(slug: string, clientIp?: string): Promise<Invitation> {
     await this.checkAndCompletedExpiredInvitations();
     const formattedSlug = slug.toLowerCase().trim();
     const invitation = await this.invitationModel.findOne({ slug: formattedSlug });
@@ -282,13 +302,35 @@ export class InvitationService {
       throw new BadRequestException('Invitation is not currently published.');
     }
 
+    const now = new Date();
     // Ensure status is marked as Completed if wedding date has passed
-    const now = new Date().toISOString();
-    if (invitation.dates?.weddingDatetime && invitation.dates.weddingDatetime < now && invitation.status !== InvitationStatus.COMPLETED) {
+    if (invitation.dates?.weddingDatetime && new Date(invitation.dates.weddingDatetime) < now && invitation.status !== InvitationStatus.COMPLETED) {
       invitation.status = InvitationStatus.COMPLETED;
-      await invitation.save();
     }
 
+    // Handle view count with IP and time interval (24 hours)
+    if (clientIp) {
+      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      
+      // Filter out log entries older than 24 hours to keep the array small
+      const activeLogs = (invitation.viewLogs || []).filter(
+        (log) => new Date(log.timestamp) > oneDayAgo
+      );
+
+      // Check if this IP viewed in the last 24 hours
+      const hasRecentView = activeLogs.some((log) => log.ip === clientIp);
+
+      if (!hasRecentView) {
+        // Increment unique views
+        invitation.views = (invitation.views || 0) + 1;
+        // Add new log entry
+        activeLogs.push({ ip: clientIp, timestamp: now });
+      }
+
+      invitation.viewLogs = activeLogs;
+    }
+
+    await invitation.save();
     return invitation;
   }
 }
