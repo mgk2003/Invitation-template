@@ -9,12 +9,37 @@
   z-index: 0;
 }
 
-.heart-balloon {
+@keyframes floatUp {
+  0% {
+    transform: translate3d(0, 110vh, 0) scale(0.8);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(var(--drift), -10vh, 0) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.heart-balloon-css {
   position: absolute;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  left: var(--left);
+  width: var(--size);
+  height: var(--size);
+  background-color: var(--color);
+  box-shadow: 0 0 10px var(--color-glow);
+  animation: floatUp var(--duration) linear infinite;
+  animation-delay: var(--delay);
+  will-change: transform, opacity;
 }
 
 .heart-shape {
@@ -46,12 +71,14 @@
   left: -50%;
 }
 
-/* Subtle glow for the hearts */
-.heart-balloon::after {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
-  pointer-events: none;
+/* Subtle glow for the hearts - Desktop only (avoid heavy gradients on mobile) */
+@media (min-width: 768px) {
+  .heart-balloon-css::after {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
 }

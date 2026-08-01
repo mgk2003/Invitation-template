@@ -56,6 +56,7 @@
   margin: 45px 0 60px;
   padding: 20px;
   animation: logo-float 6s ease-in-out infinite;
+  will-change: transform;
 }
 
 .logo-glow-effect {
@@ -154,11 +155,11 @@
 
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 
   50% {
-    transform: translateY(-20px);
+    transform: translate3d(0, -20px, 0);
   }
 }
 
@@ -183,6 +184,25 @@
   .save-date-btn-premium {
     padding: 12px 30px;
     font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-glow-effect {
+    display: none;
+  }
+
+  .logo-sparkle {
+    animation: none;
+    text-shadow: none;
+  }
+
+  .save-date-btn-premium {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(18, 9, 36, 0.85);
+    border-color: rgba(232, 213, 163, 0.8);
+    box-shadow: none;
   }
 }
 
