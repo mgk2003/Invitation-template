@@ -31,9 +31,13 @@ export class InvitationController {
 
   @Get('public/:slug')
   @ApiOperation({ summary: 'Get public invitation details by slug' })
-  async getPublicInvitation(@Param('slug') slug: string, @Req() request: any) {
-    const ip = request.ip || request.headers['x-forwarded-for'] || request.socket.remoteAddress;
-    return this.invitationService.findPublicBySlug(slug, ip);
+  async getPublicInvitation(
+    @Param('slug') slug: string,
+    @Query('preview') preview?: string,
+    @Req() request?: any,
+  ) {
+    const ip = request?.ip || request?.headers?.['x-forwarded-for'] || request?.socket?.remoteAddress;
+    return this.invitationService.findPublicBySlug(slug, ip, preview === 'true');
   }
 
   @Get('invitations')

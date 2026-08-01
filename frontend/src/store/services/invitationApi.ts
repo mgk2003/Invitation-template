@@ -56,9 +56,12 @@ export const invitationApi = createApi({
       providesTags: (result, error, id) => [{ type: 'Invitation', id }],
     }),
 
-    getPublicInvitation: builder.query<WeddingContent, string>({
-      query: (slug) => `/public/${slug}`,
-      providesTags: (result, error, slug) => [{ type: 'PublicInvitation', id: slug }],
+    getPublicInvitation: builder.query<WeddingContent, { slug: string; preview?: boolean }>({
+      query: ({ slug, preview }) => ({
+        url: `/public/${slug}`,
+        params: preview ? { preview: true } : undefined,
+      }),
+      providesTags: (result, error, { slug }) => [{ type: 'PublicInvitation', id: slug }],
     }),
 
     checkSlug: builder.query<{ available: boolean; slug: string }, { slug: string; excludeId?: string }>({

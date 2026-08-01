@@ -568,7 +568,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="flex-1 bg-zinc-950 overflow-hidden">
               <iframe
-                src={`/${previewSlug}`}
+                src={`/${previewSlug}?preview=true`}
                 className="w-full h-full border-none"
                 title="Invitation Live Preview"
               />

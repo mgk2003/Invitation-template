@@ -290,7 +290,7 @@ export class InvitationService {
     return invitation;
   }
 
-  async findPublicBySlug(slug: string, clientIp?: string): Promise<Invitation> {
+  async findPublicBySlug(slug: string, clientIp?: string, preview?: boolean): Promise<Invitation> {
     await this.checkAndCompletedExpiredInvitations();
     const formattedSlug = slug.toLowerCase().trim();
     const invitation = await this.invitationModel.findOne({ slug: formattedSlug });
@@ -298,7 +298,7 @@ export class InvitationService {
       throw new NotFoundException('Invitation not found.');
     }
 
-    if (invitation.status === InvitationStatus.DRAFT || invitation.status === InvitationStatus.INACTIVE) {
+    if (!preview && (invitation.status === InvitationStatus.DRAFT || invitation.status === InvitationStatus.INACTIVE)) {
       throw new BadRequestException('Invitation is not currently published.');
     }
 

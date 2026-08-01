@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useGetPublicInvitationQuery } from '../../store/services/invitationApi';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
@@ -19,9 +19,13 @@ import ScrollIndicator from '../../components/template/ScrollIndicator';
 
 export const PublicInvitation: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { data: content, isLoading, isError } = useGetPublicInvitationQuery(slug || '', {
-    skip: !slug,
-  });
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get('preview') === 'true';
+
+  const { data: content, isLoading, isError } = useGetPublicInvitationQuery(
+    { slug: slug || '', preview: isPreview },
+    { skip: !slug }
+  );
 
   if (isLoading) {
     return <LuxuryLoader tip="Preparing Your Wedding Experience..." fullScreen={true} />;

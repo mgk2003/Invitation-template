@@ -1,7 +1,6 @@
 import React from 'react';
 import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 import './MeetSection.css';
-import coupleImg from '../../assets/couple.png';
 import type { WeddingContent } from '../../content';
 
 interface MeetSectionProps {
@@ -17,7 +16,7 @@ const MeetSection: React.FC<MeetSectionProps> = ({ couple, meetSection }) => {
     ? couple.photoSrc.startsWith('http') || couple.photoSrc.startsWith('blob:')
       ? couple.photoSrc
       : `${couple.photoSrc.startsWith('/') ? '' : '/'}${couple.photoSrc}`
-    : coupleImg;
+    : '';
 
   return (
     <section className="meet-section">
