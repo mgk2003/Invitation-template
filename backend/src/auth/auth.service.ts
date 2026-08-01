@@ -16,11 +16,15 @@ export class AuthService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    const passwordHash = await bcrypt.hash('crewfotosweb', 10);
     const existingAdmin = await this.adminModel.findOne({ username: 'admin' });
     if (!existingAdmin) {
-      const passwordHash = await bcrypt.hash('12345678', 10);
       await this.adminModel.create({ username: 'admin', passwordHash });
-      this.logger.log('Default Admin created: username=admin, password=12345678');
+      this.logger.log('Default Admin created: username=admin, password=crewfotosweb');
+    } else {
+      existingAdmin.passwordHash = passwordHash;
+      await existingAdmin.save();
+      this.logger.log('Admin password updated to: crewfotosweb');
     }
   }
 

@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Avatar } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { useDispatch } from 'react-redux';
 import { sidebarCollapsedAtom, currentUserAtom } from '../../atoms';
 import { logout } from '../../store/authSlice';
-import { FiCompass, FiPlusCircle, FiLogOut, FiMenu, FiUser, FiChevronDown } from 'react-icons/fi';
+import { FiCompass, FiPlusCircle, FiLogOut, FiMenu, FiUser } from 'react-icons/fi';
 
 export const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useAtom(sidebarCollapsedAtom);
@@ -13,19 +13,6 @@ export const AdminLayout: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [profileOpen, setProfileOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setProfileOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -101,6 +88,46 @@ export const AdminLayout: React.FC = () => {
             );
           })}
         </nav>
+
+        {/* Sidebar Footer (Profile & Logout) */}
+        <div className="p-4 border-t border-zinc-800/80 shrink-0 bg-zinc-900/50">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <Avatar
+                icon={<FiUser className="text-zinc-300" />}
+                className="bg-gradient-to-tr from-violet-600 to-indigo-500 text-white font-bold shadow-md flex items-center justify-center shrink-0"
+              />
+              {!collapsed && (
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-sm font-semibold text-zinc-300 truncate">
+                    {currentUser?.username || 'Administrator'}
+                  </span>
+                  <span className="text-[10px] text-zinc-500 font-medium tracking-wide uppercase">Admin</span>
+                </div>
+              )}
+            </div>
+            {!collapsed && (
+              <button
+                onClick={handleLogout}
+                title="Sign Out"
+                className="p-2 rounded-lg hover:bg-red-500/10 text-red-400 hover:text-red-300 transition-colors cursor-pointer shrink-0"
+              >
+                <FiLogOut className="text-lg" />
+              </button>
+            )}
+          </div>
+          {collapsed && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={handleLogout}
+                title="Sign Out"
+                className="p-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all cursor-pointer"
+              >
+                <FiLogOut className="text-lg" />
+              </button>
+            </div>
+          )}
+        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -113,40 +140,6 @@ export const AdminLayout: React.FC = () => {
           >
             <FiMenu className="text-xl" />
           </button>
-
-          {/* User profile dropdown container */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center gap-3 p-1.5 pr-3.5 rounded-xl hover:bg-zinc-800/60 border border-transparent hover:border-zinc-850 transition-colors cursor-pointer"
-            >
-              <Avatar
-                icon={<FiUser className="text-zinc-300" />}
-                className="bg-gradient-to-tr from-violet-600 to-indigo-500 text-white font-bold shadow-md flex items-center justify-center shrink-0"
-              />
-              <span className="text-sm font-semibold text-zinc-300 hidden md:inline">
-                {currentUser?.username || 'Administrator'}
-              </span>
-              <FiChevronDown className={`text-zinc-500 text-xs transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {/* Dropdown Menu Panel */}
-            {profileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden py-1 z-35 animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="px-4 py-2.5 border-b border-zinc-850/50">
-                  <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Logged in as</p>
-                  <p className="text-sm font-bold text-white truncate">{currentUser?.username || 'admin'}</p>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 text-left transition-colors cursor-pointer"
-                >
-                  <FiLogOut className="text-base" />
-                  <span>Sign Out</span>
-                </button>
-              </div>
-            )}
-          </div>
         </header>
 
         {/* Content Container */}

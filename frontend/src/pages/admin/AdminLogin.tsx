@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, notification } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useAtom } from 'jotai';
 import { useLoginMutation } from '../../store/services/authApi';
 import { setCredentials } from '../../store/authSlice';
@@ -9,30 +9,48 @@ import { currentUserAtom } from '../../atoms';
 import { motion } from 'framer-motion';
 import { showApiErrorModal } from '../../utils/showApiErrorModal';
 import AppInput from '../../components/common/AppInput';
+import type { RootState } from '../../store';
 
 export const AdminLogin: React.FC = () => {
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [, setCurrentUser] = useAtom(currentUserAtom);
+  const [api, contextHolder] = notification.useNotification();
+  
+  const token = useSelector((state: RootState) => state.auth.token);
+
+  useEffect(() => {
+    if (token) {
+      navigate('/admin/dashboard', { replace: true });
+    }
+  }, [token, navigate]);
 
   const onFinish = async (values: any) => {
     try {
       const res = await login(values).unwrap();
       dispatch(setCredentials(res));
       setCurrentUser(res.user);
-      notification.success({
+      api.success({
         message: 'Welcome Administrator',
         description: 'Successfully logged in to Wedding Invitation Generator CMS.',
       });
       navigate('/admin/dashboard');
     } catch (err: any) {
-      showApiErrorModal('Login Authentication Failed', err);
+      console.error('Login Failed:', err);
+      const apiMessage = err?.data?.message || err?.message || 'An unexpected error occurred.';
+      const errorMessage = Array.isArray(apiMessage) ? apiMessage.join(', ') : apiMessage;
+      api.error({
+        message: 'Login Authentication Failed',
+        description: errorMessage,
+        placement: 'topRight',
+      });
     }
   };
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4 relative overflow-hidden">
+      {contextHolder}
       {/* Ambient background glow orbs */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
@@ -66,7 +84,6 @@ export const AdminLogin: React.FC = () => {
                 <Form.Item
                   name="username"
                   rules={[{ required: true, message: 'Please input admin username' }]}
-                  initialValue="admin"
                   className="mb-0"
                 >
                   <AppInput
@@ -83,7 +100,6 @@ export const AdminLogin: React.FC = () => {
                 <Form.Item
                   name="password"
                   rules={[{ required: true, message: 'Please input password' }]}
-                  initialValue="12345678"
                   className="mb-0"
                 >
                   <AppInput
@@ -94,14 +110,7 @@ export const AdminLogin: React.FC = () => {
               </div>
             </div>
 
-            <div className="my-6 text-xs text-violet-300 bg-violet-600/5 p-4 rounded-xl border border-violet-500/10">
-              <span className="font-bold text-violet-400">Quick Access:</span>
-              <div className="mt-1 text-zinc-400 font-mono">
-                User: <span className="text-white">admin</span>
-                <span className="mx-2">|</span>
-                Pass: <span className="text-white">12345678</span>
-              </div>
-            </div>
+            <div className="h-6" />
 
             <button
               type="submit"
@@ -121,4 +130,3 @@ export const AdminLogin: React.FC = () => {
 };
 
 export default AdminLogin;
-

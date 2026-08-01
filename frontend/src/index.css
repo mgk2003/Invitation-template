@@ -90,10 +90,10 @@ body {
 }
 
 .ant-input,
-.ant-input-password,
 .ant-input-number,
 .ant-select-selector,
-.ant-picker {
+.ant-picker,
+.ant-input-affix-wrapper {
   background-color: #090a0f !important;
   border: 1px solid rgba(139, 92, 246, 0.3) !important;
   color: #ffffff !important;
@@ -102,10 +102,10 @@ body {
 }
 
 .ant-input:hover,
-.ant-input-password:hover,
 .ant-input-number:hover,
 .ant-select-selector:hover,
-.ant-picker:hover {
+.ant-picker:hover,
+.ant-input-affix-wrapper:hover {
   border-color: #8b5cf6 !important;
   box-shadow: 0 0 10px rgba(139, 92, 246, 0.25) !important;
 }
@@ -113,9 +113,18 @@ body {
 .ant-input:focus,
 .ant-input-focused,
 .ant-select-focused .ant-select-selector,
-.ant-picker-focused {
+.ant-picker-focused,
+.ant-input-affix-wrapper-focused {
   border-color: #a78bfa !important;
   box-shadow: 0 0 14px rgba(167, 139, 250, 0.35) !important;
+}
+
+.ant-input-affix-wrapper > input.ant-input {
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .ant-input-group-addon {

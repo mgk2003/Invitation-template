@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, theme, App as AntdApp } from 'antd';
 import type { RootState } from './store';
 
 import AdminLogin from './pages/admin/AdminLogin';
@@ -33,34 +33,36 @@ export function App() {
         },
       }}
     >
-      <BrowserRouter>
-        <Routes>
-          {/* Admin Authentication */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+      <AntdApp>
+        <BrowserRouter>
+          <Routes>
+            {/* Admin Authentication */}
+            <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* Protected Admin Workspace */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="invitations/new" element={<InvitationForm />} />
-            <Route path="invitations/:id/edit" element={<InvitationForm />} />
-          </Route>
+            {/* Protected Admin Workspace */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="invitations/new" element={<InvitationForm />} />
+              <Route path="invitations/:id/edit" element={<InvitationForm />} />
+            </Route>
 
-          {/* Public Dynamic Invitation Route */}
-          <Route path="/:slug" element={<PublicInvitation />} />
+            {/* Public Dynamic Invitation Route */}
+            <Route path="/:slug" element={<PublicInvitation />} />
 
-          {/* Default Root Redirect */}
-          <Route path="/" element={<Navigate to="/admin/login" replace />} />
-          <Route path="*" element={<Navigate to="/admin/login" replace />} />
-        </Routes>
-      </BrowserRouter>
+            {/* Default Root Redirect */}
+            <Route path="/" element={<Navigate to="/admin/login" replace />} />
+            <Route path="*" element={<Navigate to="/admin/login" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AntdApp>
     </ConfigProvider>
   );
 }
