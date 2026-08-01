@@ -32,7 +32,7 @@ export interface InvitationsResponse {
 export const invitationApi = createApi({
   reducerPath: 'invitationApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api',
+    baseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('admin_token');
       if (token) {

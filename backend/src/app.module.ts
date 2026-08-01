@@ -12,6 +12,9 @@ import { UploadModule } from './upload/upload.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: [
+        process.env.NODE_ENV === 'production' ? '.env.production' : '.env'
+      ],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
