@@ -14,7 +14,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ music }) => {
     ? music.src.startsWith('http') || music.src.startsWith('blob:')
       ? music.src
       : `${music.src.startsWith('/') ? '' : '/'}${music.src}`
-    : '/bg-music.mp3';
+    : '';
 
   const togglePlay = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();

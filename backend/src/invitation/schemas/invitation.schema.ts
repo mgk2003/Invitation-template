@@ -171,7 +171,7 @@ export class Footer {
 
 @Schema({ _id: false })
 export class Music {
-  @Prop({ default: '/bg-music.mp3' })
+  @Prop({ default: '' })
   src: string;
 
   @Prop({ default: 0.7 })

@@ -188,9 +188,7 @@
 }
 
 .hero-couple-names-text {
-  font-family: 'Cinzel', serif;
   font-size: 3.5rem;
-  font-weight: bold;
   color: #fff;
   text-align: center;
   display: flex;
@@ -203,23 +201,31 @@
   z-index: 10;
 }
 
-.hero-couple-names-text .and-symbol {
+.hero-couple-names-text .groom-name,
+.hero-couple-names-text .bride-name {
   font-family: 'Pinyon Script', cursive;
-  font-size: 4.5rem;
+  font-weight: 400;
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.hero-couple-names-text .and-symbol {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-style: italic;
   color: #e8d5a3;
-  text-shadow: 0 0 15px rgba(232, 213, 163, 0.6);
+  text-shadow: 0 0 10px rgba(232, 213, 163, 0.4);
   line-height: 1;
 }
 
 @media (max-width: 640px) {
   .hero-couple-names-text {
-    font-size: 2.2rem;
     flex-direction: column;
     gap: 0.5rem;
   }
 
   .hero-couple-names-text .and-symbol {
-    font-size: 3.5rem;
+    font-size: 1.5rem;
     margin: -5px 0;
   }
 }

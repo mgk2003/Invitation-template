@@ -83,7 +83,7 @@ const content: WeddingContent = {
   couple: {
     groomName: 'Naveen',
     brideName: 'Nandhini',
-    logoSrc: '/coupleLogo.png',
+    logoSrc: '',
     logoAlt: 'Naveen & Nandhini Logo',
     photoAlt: 'Naveen and Nandhini',
   },
@@ -177,7 +177,7 @@ const content: WeddingContent = {
   },
 
   music: {
-    src: '/bg-music.mp3',
+    src: '',
     volume: 0.7,
   },
 };

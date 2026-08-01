@@ -8,7 +8,7 @@ const defaultContent: WeddingContent = {
   couple: {
     groomName: 'Naveen',
     brideName: 'Nandhini',
-    logoSrc: '/coupleLogo.png',
+    logoSrc: '',
     logoAlt: 'Naveen & Nandhini Logo',
     photoAlt: 'Naveen and Nandhini',
   },
@@ -104,7 +104,7 @@ const defaultContent: WeddingContent = {
   },
 
   music: {
-    src: '/bg-music.mp3',
+    src: '',
     volume: 0.7,
   },
 };
