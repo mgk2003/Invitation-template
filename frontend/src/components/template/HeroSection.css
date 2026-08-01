@@ -70,7 +70,6 @@
 .hero-couple-logo-white {
   position: relative;
   width: auto;
-  max-width: 300px;
   max-height: 250px;
   object-fit: contain;
   filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.3));
