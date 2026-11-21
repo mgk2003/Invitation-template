@@ -2,14 +2,46 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { ConfigProvider, theme, App as AntdApp, Spin } from 'antd';
-import { setCredentials, logout } from './store/authSlice';
+import { setCredentials, logout, type AuthUser } from './store/authSlice';
 import { supabase } from './lib/supabase';
 
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import InvitationForm from './pages/admin/InvitationForm';
+import SuperAdminUsers from './pages/admin/SuperAdminUsers';
 import PublicInvitation from './pages/public/PublicInvitation';
+
+// Helper to fetch user profile with role
+const fetchFullAuthUser = async (session: any): Promise<AuthUser> => {
+  let role: 'super_admin' | 'admin' = 'admin';
+  let name = session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'Admin';
+
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role, name')
+      .eq('id', session.user.id)
+      .maybeSingle();
+
+    if (profile?.role === 'super_admin' || profile?.role === 'admin') {
+      role = profile.role;
+    }
+    if (profile?.name) {
+      name = profile.name;
+    }
+  } catch {
+    // fallback
+  }
+
+  return {
+    id: session.user.id,
+    username: session.user.email || 'Admin',
+    email: session.user.email || '',
+    role,
+    name,
+  };
+};
 
 // Protected Route Guard Component - Enforces Supabase Admin Authentication
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -19,13 +51,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   useEffect(() => {
     // 1. Verify active Supabase session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         setIsAuthenticated(true);
+        const authUser = await fetchFullAuthUser(session);
         dispatch(
           setCredentials({
             access_token: session.access_token,
-            user: { username: session.user.email || 'Admin' },
+            user: authUser,
           })
         );
       } else {
@@ -38,13 +71,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     // 2. Subscribe to Supabase auth state changes (sign-in, token refresh, sign-out)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         setIsAuthenticated(true);
+        const authUser = await fetchFullAuthUser(session);
         dispatch(
           setCredentials({
             access_token: session.access_token,
-            user: { username: session.user.email || 'Admin' },
+            user: authUser,
           })
         );
       } else {
@@ -109,6 +143,7 @@ export function App() {
             >
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="users" element={<SuperAdminUsers />} />
               <Route path="invitations/new" element={<InvitationForm />} />
               <Route path="invitations/:id/edit" element={<InvitationForm />} />
             </Route>

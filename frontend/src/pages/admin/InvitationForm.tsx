@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Form, notification, Modal, Dropdown } from 'antd';
+import { Form, notification, Modal, Dropdown, Select } from 'antd';
 import type { MenuProps } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAtom } from 'jotai';
 import dayjs from 'dayjs';
 import {
   useGetInvitationQuery,
@@ -10,7 +11,9 @@ import {
   useUpdateDraftMutation,
   useUpdatePublishedMutation,
   useLazyCheckSlugQuery,
+  useGetAdminsQuery,
 } from '../../store/services/invitationApi';
+import { currentUserAtom } from '../../atoms';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import { showApiErrorModal } from '../../utils/showApiErrorModal';
 import AppInput from '../../components/common/AppInput';
@@ -58,8 +61,8 @@ const BackgroundSelector: React.FC<{
               key={option.id}
               onClick={() => onChange?.(option.id)}
               className={`group relative rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer flex flex-col ${isSelected
-                  ? 'border-violet-500 bg-violet-950/25 shadow-lg shadow-violet-500/25 ring-2 ring-violet-500/40'
-                  : 'border-zinc-800 bg-zinc-950/60 hover:border-zinc-700 hover:bg-zinc-900/60'
+                ? 'border-violet-500 bg-violet-950/25 shadow-lg shadow-violet-500/25 ring-2 ring-violet-500/40'
+                : 'border-zinc-800 bg-zinc-950/60 hover:border-zinc-700 hover:bg-zinc-900/60'
                 }`}
             >
               {/* Visual Thumbnail Area - Centered Phone Frame focusing top Bride & Groom */}
@@ -275,6 +278,10 @@ export const InvitationForm: React.FC = () => {
   const { data: existingData, isLoading: isLoadingExisting } = useGetInvitationQuery(id!, {
     skip: !isEdit,
   });
+
+  const [currentUser] = useAtom(currentUserAtom);
+  const isSuperAdmin = currentUser?.role === 'super_admin';
+  const { data: adminList = [] } = useGetAdminsQuery(undefined, { skip: !isSuperAdmin });
 
   const [createDraft, { isLoading: isDraftSaving }] = useCreateDraftMutation();
   const [publishInvitation, { isLoading: isPublishing }] = usePublishInvitationMutation();
@@ -555,6 +562,7 @@ export const InvitationForm: React.FC = () => {
     return {
       ...values,
       backgroundImage: values.backgroundImage || 'background_1',
+      adminId: values.adminId || existingData?.adminId || currentUser?.id,
       slug: values.slug?.toLowerCase().replace(/\s+/g, '-').trim(),
       dates: {
         ...values.dates,
@@ -1159,6 +1167,36 @@ export const InvitationForm: React.FC = () => {
                     addonBefore={`${window.location.origin}/`}
                   />
                 </Form.Item>
+
+                {isSuperAdmin && (
+                  <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-xs font-semibold text-amber-300 uppercase tracking-wider block">
+                          👑 Assign Invitation to Admin
+                        </span>
+                        <span className="text-xs text-zinc-400">
+                          Choose which administrator owns and manages this invitation in their CMS dashboard.
+                        </span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                        Super Admin
+                      </span>
+                    </div>
+
+                    <Form.Item name="adminId" className="mb-0">
+                      <Select
+                        className="w-full h-10"
+                        placeholder="Select an admin to assign (or keep as yourself)..."
+                        allowClear
+                        options={adminList.map((admin) => ({
+                          value: admin.id,
+                          label: `${admin.name || admin.email} (${admin.role === 'super_admin' ? '👑 Super Admin' : '⚡ Admin'})`,
+                        }))}
+                      />
+                    </Form.Item>
+                  </div>
+                )}
               </div>
 
               {/* Tab 2: Couple Info */}

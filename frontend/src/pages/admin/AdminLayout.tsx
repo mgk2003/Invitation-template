@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { sidebarCollapsedAtom, currentUserAtom } from '../../atoms';
 import { logout } from '../../store/authSlice';
 import { supabase } from '../../lib/supabase';
-import { FiCompass, FiPlusCircle, FiLogOut, FiMenu, FiUser } from 'react-icons/fi';
+import { FiCompass, FiPlusCircle, FiLogOut, FiMenu, FiUser, FiUsers } from 'react-icons/fi';
 
 export const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useAtom(sidebarCollapsedAtom);
@@ -14,6 +14,8 @@ export const AdminLayout: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isSuperAdmin = currentUser?.role === 'super_admin';
 
   const handleLogout = () => {
     supabase.auth.signOut().catch(() => {});
@@ -24,6 +26,8 @@ export const AdminLayout: React.FC = () => {
 
   const currentKey = location.pathname.includes('/new')
     ? 'create'
+    : location.pathname.includes('/users')
+    ? 'users'
     : location.pathname.includes('/edit')
     ? 'edit'
     : 'dashboard';
@@ -31,10 +35,20 @@ export const AdminLayout: React.FC = () => {
   const menuItems = [
     {
       key: 'dashboard',
-      label: 'Dashboard',
+      label: isSuperAdmin ? 'All Invitations' : 'My Invitations',
       icon: <FiCompass className="text-lg" />,
       onClick: () => navigate('/admin/dashboard'),
     },
+    ...(isSuperAdmin
+      ? [
+          {
+            key: 'users',
+            label: 'Manage Admins',
+            icon: <FiUsers className="text-lg" />,
+            onClick: () => navigate('/admin/users'),
+          },
+        ]
+      : []),
     {
       key: 'create',
       label: 'Create Invitation',
@@ -97,14 +111,20 @@ export const AdminLayout: React.FC = () => {
             <div className="flex items-center gap-3 overflow-hidden">
               <Avatar
                 icon={<FiUser className="text-zinc-300" />}
-                className="bg-gradient-to-tr from-violet-600 to-indigo-500 text-white font-bold shadow-md flex items-center justify-center shrink-0"
+                className={`font-bold shadow-md flex items-center justify-center shrink-0 ${
+                  isSuperAdmin
+                    ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
+                    : 'bg-gradient-to-tr from-violet-600 to-indigo-500 text-white'
+                }`}
               />
               {!collapsed && (
                 <div className="flex flex-col overflow-hidden">
                   <span className="text-sm font-semibold text-zinc-300 truncate">
-                    {currentUser?.username || 'Administrator'}
+                    {currentUser?.name || currentUser?.username || 'Admin'}
                   </span>
-                  <span className="text-[10px] text-zinc-500 font-medium tracking-wide uppercase">Admin</span>
+                  <span className="text-[10px] text-zinc-500 font-medium tracking-wide uppercase">
+                    {isSuperAdmin ? '👑 Super Admin' : '⚡ Admin'}
+                  </span>
                 </div>
               )}
             </div>
@@ -142,6 +162,21 @@ export const AdminLayout: React.FC = () => {
           >
             <FiMenu className="text-xl" />
           </button>
+
+          <div className="flex items-center gap-3">
+            {isSuperAdmin ? (
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-violet-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
+                👑 Super Admin
+              </span>
+            ) : (
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-300 border border-violet-500/30 flex items-center gap-1.5 shadow-sm">
+                ⚡ Admin
+              </span>
+            )}
+            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+              {currentUser?.email || currentUser?.username}
+            </span>
+          </div>
         </header>
 
         {/* Content Container */}
@@ -154,4 +189,3 @@ export const AdminLayout: React.FC = () => {
 };
 
 export default AdminLayout;
-

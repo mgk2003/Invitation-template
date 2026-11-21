@@ -82,11 +82,24 @@ export interface Music {
 
 export type InvitationStatus = 'Draft' | 'Active' | 'Inactive' | 'Completed';
 
+export interface AdminUser {
+  id: string;
+  email: string;
+  role: 'super_admin' | 'admin';
+  name?: string;
+  createdAt?: string;
+  invitationCount?: number;
+}
+
 export interface WeddingContent {
   _id?: string;
+  id?: string;
   slug: string;
   status: InvitationStatus;
   backgroundImage?: string;
+  adminId?: string;
+  adminEmail?: string;
+  adminName?: string;
   couple: Couple;
   dates: Dates;
   hero: Hero;

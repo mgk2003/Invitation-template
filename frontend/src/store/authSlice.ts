@@ -1,15 +1,30 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+  role: 'super_admin' | 'admin';
+  name?: string;
+}
+
 interface AuthState {
   token: string | null;
-  user: { username: string } | null;
+  user: AuthUser | null;
 }
+
+const getInitialUser = (): AuthUser | null => {
+  try {
+    const raw = localStorage.getItem('admin_user');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
 
 const initialState: AuthState = {
   token: localStorage.getItem('admin_token') || null,
-  user: localStorage.getItem('admin_user')
-    ? JSON.parse(localStorage.getItem('admin_user') || '{}')
-    : null,
+  user: getInitialUser(),
 };
 
 const authSlice = createSlice({
@@ -18,7 +33,7 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ access_token: string; user: { username: string } }>,
+      action: PayloadAction<{ access_token: string; user: AuthUser }>,
     ) => {
       state.token = action.payload.access_token;
       state.user = action.payload.user;

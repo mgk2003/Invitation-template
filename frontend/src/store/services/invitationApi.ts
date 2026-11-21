@@ -1,5 +1,5 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { WeddingContent, InvitationStatus } from '../../types/wedding';
+import type { WeddingContent, InvitationStatus, AdminUser } from '../../types/wedding';
 import { supabase } from '../../lib/supabase';
 
 export interface QueryParams {
@@ -11,6 +11,7 @@ export interface QueryParams {
   sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
+  adminId?: string;
 }
 
 export interface InvitationsResponse {
@@ -64,12 +65,12 @@ function formatDefaultDates(dates: any) {
 export const invitationApi = createApi({
   reducerPath: 'invitationApi',
   baseQuery: fakeBaseQuery(),
-  tagTypes: ['Invitation', 'PublicInvitation'],
+  tagTypes: ['Invitation', 'PublicInvitation', 'AdminUsers'],
   endpoints: (builder) => ({
     getInvitations: builder.query<InvitationsResponse, QueryParams>({
       async queryFn(params = {}) {
         try {
-          // Attempt using the optimized Supabase RPC function first
+          // Attempt using the Supabase RPC function (scoped by caller role in Postgres)
           const { data: rpcData, error: rpcError } = await supabase.rpc(
             'get_invitations_with_counts',
             {
@@ -81,6 +82,7 @@ export const invitationApi = createApi({
               p_sort_order: params.sortOrder || 'desc',
               p_page: params.page || 1,
               p_limit: params.limit || 10,
+              p_admin_id: params.adminId || null,
             }
           );
 
@@ -88,13 +90,17 @@ export const invitationApi = createApi({
             return { data: rpcData as InvitationsResponse };
           }
 
-          // Fallback to direct table queries if RPC is not installed yet
+          // Fallback to direct table queries
           const page = params.page || 1;
           const limit = params.limit || 10;
           const from = (page - 1) * limit;
           const to = from + limit - 1;
 
           let query = supabase.from('invitations').select('*', { count: 'exact' });
+
+          if (params.adminId) {
+            query = query.eq('adminId', params.adminId);
+          }
 
           if (params.status) {
             query = query.eq('status', params.status);
@@ -246,10 +252,18 @@ export const invitationApi = createApi({
           const formattedSlug = (body.slug || '').toLowerCase().trim();
           const dates = formatDefaultDates(body.dates);
 
+          // Determine owner adminId
+          let adminId = body.adminId;
+          if (!adminId) {
+            const { data: { session } } = await supabase.auth.getSession();
+            adminId = session?.user?.id;
+          }
+
           const payload: any = {
             ...body,
             slug: formattedSlug,
             dates,
+            adminId,
             status: 'Draft',
           };
 
@@ -268,7 +282,7 @@ export const invitationApi = createApi({
           return { error: { status: 500, data: { message: err?.message } } };
         }
       },
-      invalidatesTags: ['Invitation'],
+      invalidatesTags: ['Invitation', 'AdminUsers'],
     }),
 
     publishInvitation: builder.mutation<WeddingContent, Partial<WeddingContent>>({
@@ -285,10 +299,18 @@ export const invitationApi = createApi({
             }
           }
 
+          // Determine owner adminId
+          let adminId = body.adminId;
+          if (!adminId) {
+            const { data: { session } } = await supabase.auth.getSession();
+            adminId = session?.user?.id;
+          }
+
           const payload: any = {
             ...body,
             slug: formattedSlug,
             dates,
+            adminId,
             status,
           };
 
@@ -307,7 +329,7 @@ export const invitationApi = createApi({
           return { error: { status: 500, data: { message: err?.message } } };
         }
       },
-      invalidatesTags: ['Invitation'],
+      invalidatesTags: ['Invitation', 'AdminUsers'],
     }),
 
     updateDraft: builder.mutation<WeddingContent, { id: string; data: Partial<WeddingContent> }>({
@@ -338,7 +360,7 @@ export const invitationApi = createApi({
           return { error: { status: 500, data: { message: err?.message } } };
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Invitation', id }, 'Invitation'],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Invitation', id }, 'Invitation', 'AdminUsers'],
     }),
 
     updatePublished: builder.mutation<WeddingContent, { id: string; data: Partial<WeddingContent> }>({
@@ -381,6 +403,7 @@ export const invitationApi = createApi({
         { type: 'Invitation', id },
         'Invitation',
         'PublicInvitation',
+        'AdminUsers',
       ],
     }),
 
@@ -423,7 +446,7 @@ export const invitationApi = createApi({
           return { error: { status: 500, data: { message: err?.message } } };
         }
       },
-      invalidatesTags: ['Invitation'],
+      invalidatesTags: ['Invitation', 'AdminUsers'],
     }),
 
     uploadFile: builder.mutation<{ url: string }, FormData>({
@@ -456,6 +479,57 @@ export const invitationApi = createApi({
         }
       },
     }),
+
+    // Super Admin: List All Admins
+    getAdmins: builder.query<AdminUser[], void>({
+      async queryFn() {
+        try {
+          const { data, error } = await supabase.rpc('get_all_admins');
+          if (error) {
+            // Fallback to querying profiles table directly
+            const { data: profiles, error: pError } = await supabase
+              .from('profiles')
+              .select('*')
+              .order('createdAt', { ascending: true });
+
+            if (pError) {
+              return { error: { status: 500, data: { message: pError.message } } };
+            }
+            return { data: (profiles as unknown as AdminUser[]) || [] };
+          }
+          return { data: (data as AdminUser[]) || [] };
+        } catch (err: any) {
+          return { error: { status: 500, data: { message: err?.message } } };
+        }
+      },
+      providesTags: ['AdminUsers'],
+    }),
+
+    // Super Admin: Create New Admin User
+    createAdmin: builder.mutation<
+      AdminUser,
+      { email: string; password: string; name?: string; role?: 'admin' | 'super_admin' }
+    >({
+      async queryFn({ email, password, name, role = 'admin' }) {
+        try {
+          const { data, error } = await supabase.rpc('create_new_admin_user', {
+            p_email: email,
+            p_password: password,
+            p_name: name || null,
+            p_role: role,
+          });
+
+          if (error) {
+            return { error: { status: 400, data: { message: error.message } } };
+          }
+
+          return { data: data as AdminUser };
+        } catch (err: any) {
+          return { error: { status: 500, data: { message: err?.message } } };
+        }
+      },
+      invalidatesTags: ['AdminUsers'],
+    }),
   }),
 });
 
@@ -471,4 +545,6 @@ export const {
   useChangeStatusMutation,
   useDeleteInvitationMutation,
   useUploadFileMutation,
+  useGetAdminsQuery,
+  useCreateAdminMutation,
 } = invitationApi;

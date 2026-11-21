@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import dayjs from 'dayjs';
 import {
   useGetInvitationsQuery,
   useChangeStatusMutation,
   useDeleteInvitationMutation,
+  useGetAdminsQuery,
 } from '../../store/services/invitationApi';
 import {
   searchQueryAtom,
   statusFilterAtom,
   dateFilterAtom,
   paginationAtom,
+  currentUserAtom,
 } from '../../atoms';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import { showApiErrorModal } from '../../utils/showApiErrorModal';
@@ -41,10 +43,19 @@ import {
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentUser] = useAtom(currentUserAtom);
+  const isSuperAdmin = currentUser?.role === 'super_admin';
+
   const [search, setSearch] = useAtom(searchQueryAtom);
   const [statusFilter, setStatusFilter] = useAtom(statusFilterAtom);
   const [dateFilter, setDateFilter] = useAtom(dateFilterAtom);
   const [pagination, setPagination] = useAtom(paginationAtom);
+
+  const [selectedAdminId, setSelectedAdminId] = useState<string | undefined>(
+    searchParams.get('adminId') || undefined
+  );
+  const { data: adminList = [] } = useGetAdminsQuery(undefined, { skip: !isSuperAdmin });
 
   const [shareSlug, setShareSlug] = useState<string | null>(null);
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
@@ -60,6 +71,7 @@ export const AdminDashboard: React.FC = () => {
     limit: pagination.limit,
     sortBy: pagination.sortBy,
     sortOrder: pagination.sortOrder,
+    adminId: selectedAdminId || undefined,
   };
 
   const { data, isLoading, isFetching, refetch } = useGetInvitationsQuery(queryParams);
@@ -136,11 +148,24 @@ export const AdminDashboard: React.FC = () => {
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white font-serif bg-gradient-to-r from-violet-400 via-indigo-300 to-fuchsia-400 bg-clip-text text-transparent mb-1">
-            Invitation Dashboard
-          </h1>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-3xl font-bold tracking-tight text-white font-serif bg-gradient-to-r from-violet-400 via-indigo-300 to-fuchsia-400 bg-clip-text text-transparent">
+              {isSuperAdmin ? 'All Platform Invitations' : 'My Wedding Invitations'}
+            </h1>
+            {isSuperAdmin ? (
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                👑 Super Admin View (Global)
+              </span>
+            ) : (
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-300 border border-violet-500/30">
+                ⚡ Admin View (Scoped)
+              </span>
+            )}
+          </div>
           <p className="text-xs text-zinc-400 uppercase tracking-widest font-semibold font-mono">
-            Manage all wedding invitations and content
+            {isSuperAdmin
+              ? 'Global control: View, edit, and assign invitations across all administrators'
+              : 'Manage and update invitations assigned to your account'}
           </p>
         </div>
 
@@ -227,7 +252,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Filter and Search Bar */}
       <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl shadow-xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${isSuperAdmin ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-4`}>
           <div>
             <AppInput
               type="text"
@@ -282,15 +307,43 @@ export const AdminDashboard: React.FC = () => {
               }}
             />
           </div>
+
+          {isSuperAdmin && (
+            <div>
+              <AppInput
+                type="select"
+                placeholder="Filter by Admin"
+                value={selectedAdminId}
+                onChange={(val) => {
+                  setSelectedAdminId(val || undefined);
+                  if (val) {
+                    setSearchParams({ adminId: val });
+                  } else {
+                    setSearchParams({});
+                  }
+                  setPagination((prev) => ({ ...prev, page: 1 }));
+                }}
+                options={[
+                  { label: 'All Administrators', value: '' },
+                  ...adminList.map((a) => ({
+                    label: `${a.name || a.email} (${a.role === 'super_admin' ? 'Super Admin' : 'Admin'})`,
+                    value: a.id,
+                  })),
+                ]}
+              />
+            </div>
+          )}
         </div>
 
-        {(search || statusFilter || dateFilter[0] || dateFilter[1]) && (
+        {(search || statusFilter || dateFilter[0] || dateFilter[1] || selectedAdminId) && (
           <div className="flex justify-end mt-3">
             <button
               onClick={() => {
                 setSearch('');
                 setStatusFilter(undefined);
                 setDateFilter([null, null]);
+                setSelectedAdminId(undefined);
+                setSearchParams({});
                 setPagination({ page: 1, limit: 10, sortBy: 'createdAt', sortOrder: 'desc' });
               }}
               className="text-xs text-red-400 hover:text-red-300 font-semibold cursor-pointer"
@@ -316,6 +369,7 @@ export const AdminDashboard: React.FC = () => {
                   >
                     Bride & Groom {renderSortIndicator('couple')}
                   </th>
+                  {isSuperAdmin && <th className="py-4 px-6">Assigned Admin</th>}
                   <th className="py-4 px-6">Slug</th>
                   <th
                     className="py-4 px-6 cursor-pointer hover:text-white transition-colors"
@@ -338,7 +392,7 @@ export const AdminDashboard: React.FC = () => {
               <tbody className="divide-y divide-zinc-800/80">
                 {(!data?.items || data.items.length === 0) ? (
                   <tr>
-                    <td colSpan={8} className="text-center py-10 text-zinc-500 text-sm">
+                    <td colSpan={isSuperAdmin ? 9 : 8} className="text-center py-10 text-zinc-500 text-sm">
                       No invitations found.
                     </td>
                   </tr>
@@ -346,7 +400,7 @@ export const AdminDashboard: React.FC = () => {
                   data.items.map((record: WeddingContent) => {
                     const publicUrl = `${window.location.origin}/${record.slug}`;
                     return (
-                      <tr key={record._id} className="hover:bg-zinc-950/40 transition-colors group">
+                      <tr key={record._id || record.id} className="hover:bg-zinc-950/40 transition-colors group">
                         {/* Bride & Groom */}
                         <td className="py-4.5 px-6">
                           <div className="font-semibold text-white group-hover:text-violet-400 transition-colors">
@@ -354,6 +408,24 @@ export const AdminDashboard: React.FC = () => {
                           </div>
                           <div className="text-xs text-zinc-500 mt-0.5">{record.couple?.logoAlt || 'No Alt Text'}</div>
                         </td>
+
+                        {/* Assigned Admin (Super Admin view) */}
+                        {isSuperAdmin && (
+                          <td className="py-4.5 px-6">
+                            {record.adminName || record.adminEmail ? (
+                              <div className="flex flex-col">
+                                <span className="font-semibold text-xs text-white flex items-center gap-1.5">
+                                  <span>👤</span> {record.adminName || record.adminEmail?.split('@')[0]}
+                                </span>
+                                <span className="text-[11px] text-zinc-400 font-mono">
+                                  {record.adminEmail}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-zinc-600 font-mono italic">Unassigned</span>
+                            )}
+                          </td>
+                        )}
 
                         {/* Slug */}
                         <td className="py-4.5 px-6">

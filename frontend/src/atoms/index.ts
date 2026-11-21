@@ -1,7 +1,8 @@
 import { atom } from 'jotai';
 import type { WeddingContent, InvitationStatus } from '../types/wedding';
+import type { AuthUser } from '../store/authSlice';
 
-const getInitialUser = (): { username: string } | null => {
+const getInitialUser = (): AuthUser | null => {
   try {
     const item = localStorage.getItem('admin_user');
     return item ? JSON.parse(item) : null;
@@ -10,7 +11,7 @@ const getInitialUser = (): { username: string } | null => {
   }
 };
 
-export const currentUserAtom = atom<{ username: string } | null>(getInitialUser());
+export const currentUserAtom = atom<AuthUser | null>(getInitialUser());
 
 export const themeAtom = atom<'dark' | 'light'>('dark');
 

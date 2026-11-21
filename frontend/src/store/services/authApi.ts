@@ -1,12 +1,13 @@
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
 import { supabase } from '../../lib/supabase';
+import type { AuthUser } from '../authSlice';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
     login: builder.mutation<
-      { access_token: string; user: { username: string; email?: string } },
+      { access_token: string; user: AuthUser },
       { username: string; password: string }
     >({
       async queryFn(credentials) {
@@ -38,13 +39,41 @@ export const authApi = createApi({
             };
           }
 
+          // Fetch profile to know role (super_admin vs admin)
+          let role: 'super_admin' | 'admin' = 'admin';
+          let name = data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'Admin';
+
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role, name')
+              .eq('id', data.user.id)
+              .maybeSingle();
+
+            if (profile) {
+              if (profile.role === 'super_admin' || profile.role === 'admin') {
+                role = profile.role;
+              }
+              if (profile.name) {
+                name = profile.name;
+              }
+            }
+          } catch {
+            // Profile fetch optional fallback
+          }
+
+          const authUser: AuthUser = {
+            id: data.user.id,
+            username: data.user.email || username,
+            email: data.user.email || email,
+            role,
+            name,
+          };
+
           return {
             data: {
               access_token: data.session.access_token,
-              user: {
-                username: data.user.email || username,
-                email: data.user.email,
-              },
+              user: authUser,
             },
           };
         } catch (err: any) {
