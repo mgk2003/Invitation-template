@@ -1,12 +1,21 @@
-import React from 'react';
-import { Avatar } from 'antd';
+import React, { useState } from 'react';
+import { Avatar, Modal, Form, notification } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { useDispatch } from 'react-redux';
 import { sidebarCollapsedAtom, currentUserAtom } from '../../atoms';
 import { logout } from '../../store/authSlice';
 import { supabase } from '../../lib/supabase';
-import { FiCompass, FiPlusCircle, FiLogOut, FiMenu, FiUser, FiUsers } from 'react-icons/fi';
+import {
+  FiCompass,
+  FiPlusCircle,
+  FiLogOut,
+  FiMenu,
+  FiUser,
+  FiUsers,
+  FiKey,
+} from 'react-icons/fi';
+import AppInput from '../../components/common/AppInput';
 
 export const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useAtom(sidebarCollapsedAtom);
@@ -15,6 +24,11 @@ export const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [changePasswordForm] = Form.useForm();
+  const [api, contextHolder] = notification.useNotification();
+
   const isSuperAdmin = currentUser?.role === 'super_admin';
 
   const handleLogout = () => {
@@ -22,6 +36,41 @@ export const AdminLayout: React.FC = () => {
     dispatch(logout());
     setCurrentUser(null);
     navigate('/admin/login');
+  };
+
+  const handleChangeMyPassword = async (values: any) => {
+    try {
+      setIsChangingPassword(true);
+      const { error } = await supabase.auth.updateUser({
+        password: values.newPassword,
+      });
+
+      if (error) {
+        api.error({
+          message: 'Password Update Failed',
+          description: error.message || 'Could not update your password.',
+          placement: 'topRight',
+        });
+        return;
+      }
+
+      api.success({
+        message: 'Password Changed Successfully',
+        description: 'Your login password has been updated. Use it on your next login.',
+        placement: 'topRight',
+      });
+
+      setIsChangePasswordOpen(false);
+      changePasswordForm.resetFields();
+    } catch (err: any) {
+      api.error({
+        message: 'Password Update Failed',
+        description: err?.message || 'An unexpected error occurred.',
+        placement: 'topRight',
+      });
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   const currentKey = location.pathname.includes('/new')
@@ -154,6 +203,8 @@ export const AdminLayout: React.FC = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
+        {contextHolder}
+
         {/* Header Bar */}
         <header className="h-16 px-6 bg-zinc-950/60 backdrop-blur-md border-b border-zinc-900 flex items-center justify-between shrink-0 z-20">
           <button
@@ -164,6 +215,31 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <div className="flex items-center gap-3">
+            {/* Super Admin Manage Users Link */}
+            {isSuperAdmin && (
+              <button
+                onClick={() => navigate('/admin/users')}
+                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                title="Manage team administrators & reset passwords"
+              >
+                <FiUsers className="text-sm" />
+                <span>Manage Admins</span>
+              </button>
+            )}
+
+            {/* Change My Password (Every Logged-in User) */}
+            <button
+              onClick={() => {
+                changePasswordForm.resetFields();
+                setIsChangePasswordOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-sm"
+              title="Change your login password"
+            >
+              <FiKey className="text-amber-400 text-sm" />
+              <span className="hidden sm:inline">Change Password</span>
+            </button>
+
             {isSuperAdmin ? (
               <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-violet-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
                 👑 Super Admin
@@ -173,7 +249,7 @@ export const AdminLayout: React.FC = () => {
                 ⚡ Admin
               </span>
             )}
-            <span className="text-xs text-zinc-400 font-mono hidden sm:inline">
+            <span className="text-xs text-zinc-400 font-mono hidden lg:inline">
               {currentUser?.email || currentUser?.username}
             </span>
           </div>
@@ -184,6 +260,139 @@ export const AdminLayout: React.FC = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Modal: Change My Password (Available to Every Logged-in User) */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2 text-white font-serif text-lg">
+            <FiKey className="text-amber-400" />
+            <span>Change Your Password</span>
+          </div>
+        }
+        open={isChangePasswordOpen}
+        onCancel={() => {
+          setIsChangePasswordOpen(false);
+          changePasswordForm.resetFields();
+        }}
+        footer={null}
+        destroyOnClose
+        centered
+        className="luxury-modal"
+      >
+        <div className="pt-2">
+          {/* User Info Card */}
+          <div className="p-3.5 mb-5 rounded-xl bg-zinc-950/60 border border-zinc-800 flex items-center gap-3">
+            <Avatar
+              className={`font-bold shrink-0 ${
+                isSuperAdmin
+                  ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
+                  : 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white'
+              }`}
+            >
+              {(currentUser?.name || currentUser?.email || 'U')[0].toUpperCase()}
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-semibold text-white truncate">
+                {currentUser?.name || currentUser?.username || 'Current User'}
+              </div>
+              <div className="text-xs text-zinc-400 truncate font-mono">
+                {currentUser?.email || currentUser?.username}
+              </div>
+            </div>
+            <span
+              className={`px-2 py-0.5 rounded text-[11px] font-semibold border shrink-0 ${
+                isSuperAdmin
+                  ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                  : 'bg-violet-500/10 text-violet-300 border-violet-500/30'
+              }`}
+            >
+              {isSuperAdmin ? '👑 Super Admin' : '⚡ Admin'}
+            </span>
+          </div>
+
+          <div className="text-xs text-zinc-400 mb-5 leading-relaxed">
+            Enter a new password for your account. Once changed, use your new credentials for future logins.
+          </div>
+
+          <Form
+            form={changePasswordForm}
+            layout="vertical"
+            onFinish={handleChangeMyPassword}
+          >
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
+                  New Password
+                </label>
+                <Form.Item
+                  name="newPassword"
+                  rules={[
+                    { required: true, message: 'Please enter a new password' },
+                    { min: 6, message: 'Password must be at least 6 characters' },
+                  ]}
+                  className="mb-0"
+                >
+                  <AppInput
+                    type="password"
+                    placeholder="Enter new password (min. 6 characters)"
+                  />
+                </Form.Item>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
+                  Confirm New Password
+                </label>
+                <Form.Item
+                  name="confirmPassword"
+                  dependencies={['newPassword']}
+                  rules={[
+                    { required: true, message: 'Please confirm your new password' },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('newPassword') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('The two passwords do not match'));
+                      },
+                    }),
+                  ]}
+                  className="mb-0"
+                >
+                  <AppInput
+                    type="password"
+                    placeholder="Re-enter new password"
+                  />
+                </Form.Item>
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsChangePasswordOpen(false);
+                  changePasswordForm.resetFields();
+                }}
+                className="px-4 py-2.5 rounded-xl border border-zinc-700 bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 hover:text-white text-sm font-semibold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                disabled={isChangingPassword}
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 text-white font-semibold text-sm shadow-lg shadow-amber-500/25 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isChangingPassword && (
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                )}
+                <span>Update Password</span>
+              </button>
+            </div>
+          </Form>
+        </div>
+      </Modal>
     </div>
   );
 };

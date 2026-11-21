@@ -316,10 +316,10 @@ export const SuperAdminUsers: React.FC = () => {
                             <button
                               onClick={() => handleOpenPasswordModal(admin)}
                               className="px-3 py-1.5 rounded-lg border border-amber-500/30 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 text-xs font-semibold transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
-                              title={`Change password for ${admin.name || admin.email}`}
+                              title={`Reset password for ${admin.name || admin.email}`}
                             >
-                              <FiKey className="text-xs" />
-                              <span>Change Password</span>
+                              <FiKey className="text-xs text-amber-400" />
+                              <span>Reset Password</span>
                             </button>
                           ) : (
                             <span className="text-[11px] text-zinc-500 italic px-2 py-1 select-none">
@@ -459,12 +459,12 @@ export const SuperAdminUsers: React.FC = () => {
         </Form>
       </Modal>
 
-      {/* Modal: Change Admin Password */}
+      {/* Modal: Reset Admin Password (Super Admin Only) */}
       <Modal
         title={
           <div className="flex items-center gap-2 text-white font-serif text-lg">
             <FiKey className="text-amber-400" />
-            <span>Change Administrator Password</span>
+            <span>Reset Administrator Password</span>
           </div>
         }
         open={isPasswordModalOpen}

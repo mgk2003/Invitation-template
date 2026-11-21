@@ -559,10 +559,17 @@ export const InvitationForm: React.FC = () => {
 
   // Build Payload from Form Values
   const getPayload = (values: any) => {
+    let targetAdminId = existingData?.adminId;
+    if (isSuperAdmin) {
+      targetAdminId = values.adminId !== undefined ? values.adminId : (existingData?.adminId || currentUser?.id);
+    } else {
+      targetAdminId = existingData?.adminId || currentUser?.id;
+    }
+
     return {
       ...values,
       backgroundImage: values.backgroundImage || 'background_1',
-      adminId: values.adminId || existingData?.adminId || currentUser?.id,
+      adminId: targetAdminId,
       slug: values.slug?.toLowerCase().replace(/\s+/g, '-').trim(),
       dates: {
         ...values.dates,
@@ -902,7 +909,8 @@ export const InvitationForm: React.FC = () => {
   const onPublish = async () => {
     try {
       const values = await form.validateFields();
-      const payload = getPayload(values);
+      const fullValues = form.getFieldsValue(true);
+      const payload = getPayload({ ...fullValues, ...values });
 
       if (isEdit) {
         await updatePublished({ id: id!, data: payload }).unwrap();

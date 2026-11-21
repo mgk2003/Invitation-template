@@ -39,6 +39,7 @@ import {
   FiCheckCircle,
   FiAlertCircle,
   FiCheckSquare,
+  FiUsers,
 } from 'react-icons/fi';
 
 export const AdminDashboard: React.FC = () => {
@@ -170,6 +171,16 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          {isSuperAdmin && (
+            <button
+              onClick={() => navigate('/admin/users')}
+              className="flex items-center gap-2 px-4 py-2.5 bg-zinc-900 border border-zinc-800 hover:border-violet-500/50 rounded-xl text-sm font-semibold text-zinc-300 hover:text-white transition-all cursor-pointer"
+              title="Manage team administrators & reset passwords"
+            >
+              <FiUsers className="text-base text-violet-400" />
+              <span>Manage Admins</span>
+            </button>
+          )}
           <button
             onClick={() => refetch()}
             className="flex items-center gap-2 px-4 py-2.5 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 rounded-xl text-sm font-semibold transition-all cursor-pointer"
@@ -501,16 +512,14 @@ export const AdminDashboard: React.FC = () => {
                         {/* Actions */}
                         <td className="py-4.5 px-6 text-right">
                           <div className="flex items-center justify-end gap-1.5">
-                            {/* Edit */}
-                            {(record.status === 'Draft' || record.status === 'Inactive' || record.status === 'Completed') && (
-                              <button
-                                onClick={() => navigate(`/admin/invitations/${record._id}/edit`)}
-                                className="p-2 rounded-lg bg-zinc-800 hover:bg-violet-500/10 text-zinc-400 hover:text-violet-400 transition-all cursor-pointer"
-                                title="Edit Invitation"
-                              >
-                                <FiEdit className="text-sm" />
-                              </button>
-                            )}
+                            {/* Edit (Available on all statuses for assigned admin / super admin) */}
+                            <button
+                              onClick={() => navigate(`/admin/invitations/${record.id || record._id}/edit`)}
+                              className="p-2 rounded-lg bg-zinc-800 hover:bg-violet-500/10 text-zinc-400 hover:text-violet-400 transition-all cursor-pointer"
+                              title="Edit Invitation"
+                            >
+                              <FiEdit className="text-sm" />
+                            </button>
 
                             {/* Preview */}
                             <button
@@ -531,15 +540,13 @@ export const AdminDashboard: React.FC = () => {
                             </button>
 
                             {/* Delete */}
-                            {(record.status === 'Draft' || record.status === 'Inactive' || record.status === 'Completed') && (
-                              <button
-                                onClick={() => setDeleteConfirmRecord({ id: record._id!, slug: record.slug })}
-                                className="p-2 rounded-lg bg-zinc-800 hover:bg-red-500/10 text-zinc-400 hover:text-red-400 transition-all cursor-pointer"
-                                title="Delete Invitation"
-                              >
-                                <FiTrash2 className="text-sm" />
-                              </button>
-                            )}
+                            <button
+                              onClick={() => setDeleteConfirmRecord({ id: (record.id || record._id)!, slug: record.slug })}
+                              className="p-2 rounded-lg bg-zinc-800 hover:bg-red-500/10 text-zinc-400 hover:text-red-400 transition-all cursor-pointer"
+                              title="Delete Invitation"
+                            >
+                              <FiTrash2 className="text-sm" />
+                            </button>
                           </div>
                         </td>
                       </tr>
