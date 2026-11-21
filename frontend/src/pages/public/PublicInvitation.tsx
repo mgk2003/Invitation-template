@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { isDateRevealOpenAtom } from '../../atoms';
 import { useGetPublicInvitationQuery } from '../../store/services/invitationApi';
+import { supabase } from '../../lib/supabase';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import { getBackgroundImageUrl } from '../../types/wedding';
 
@@ -34,6 +35,35 @@ export const PublicInvitation: React.FC = () => {
     { slug: slug || '', preview: isPreview },
     { skip: !slug }
   );
+
+  // Efficient & deduplicated visitor views tracking
+  useEffect(() => {
+    if (!slug || isPreview || !content) return;
+
+    const formattedSlug = slug.toLowerCase().trim();
+    const storageKey = `wedding_viewed_${formattedSlug}`;
+    const lastViewed = localStorage.getItem(storageKey);
+    const now = Date.now();
+    const COOLDOWN_MS = 10 * 60 * 1000; // 10-minute visitor cooldown window
+
+    // If already viewed in the last 10 minutes on this browser, do not increment on refresh
+    if (lastViewed && now - parseInt(lastViewed, 10) < COOLDOWN_MS) {
+      return;
+    }
+
+    // Do not count visits from logged-in administrators testing their own links
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        return;
+      }
+
+      // Mark as viewed on this device
+      localStorage.setItem(storageKey, String(now));
+
+      // Asynchronously increment atomic views in database
+      supabase.rpc('increment_invitation_views', { p_slug: formattedSlug }).then();
+    });
+  }, [slug, isPreview, Boolean(content)]);
 
   if (isLoading) {
     return <LuxuryLoader tip="Preparing Your Wedding Experience..." fullScreen={true} />;

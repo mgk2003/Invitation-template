@@ -73,9 +73,9 @@ export const RoyalEnvelope: React.FC<RoyalEnvelopeProps> = ({ couple, dates, onO
             </div>
 
             <div className="royal-envelope-couple-names">
-              <span>{groomName}</span>
+              <span className="royal-groom-name">{groomName}</span>
               <span className="royal-amp">&amp;</span>
-              <span>{brideName}</span>
+              <span className="royal-bride-name">{brideName}</span>
             </div>
 
             {/* Royal Intertwined Golden Wedding Rings Ornament */}

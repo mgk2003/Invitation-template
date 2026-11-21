@@ -210,11 +210,6 @@ export const invitationApi = createApi({
             };
           }
 
-          // Asynchronously increment views if public view
-          if (!preview) {
-            supabase.rpc('increment_invitation_views', { p_slug: formattedSlug }).then();
-          }
-
           return { data: data as unknown as WeddingContent };
         } catch (err: any) {
           return { error: { status: 500, data: { message: err?.message } } };
