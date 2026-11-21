@@ -32,9 +32,15 @@ CREATE TABLE IF NOT EXISTS public.invitations (
     couple JSONB NOT NULL DEFAULT '{}'::jsonb,
     dates JSONB NOT NULL DEFAULT '{}'::jsonb,
     hero JSONB DEFAULT '{}'::jsonb,
+    "inviteCard" JSONB DEFAULT '{}'::jsonb,
     events JSONB DEFAULT '[]'::jsonb,
     "meetSection" JSONB DEFAULT '{}'::jsonb,
+    "messageSection" JSONB DEFAULT '{}'::jsonb,
+    "countdownSection" JSONB DEFAULT '{}'::jsonb,
     "thingsToKnow" JSONB DEFAULT '{}'::jsonb,
+    social JSONB DEFAULT '{}'::jsonb,
+    footer JSONB DEFAULT '{}'::jsonb,
+    music JSONB DEFAULT '{}'::jsonb,
     rsvp JSONB DEFAULT '{}'::jsonb,
     audio JSONB DEFAULT '{}'::jsonb,
     views INTEGER DEFAULT 0,
@@ -43,12 +49,33 @@ CREATE TABLE IF NOT EXISTS public.invitations (
     "updatedAt" TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Ensure columns exist if table was previously created
+-- Ensure all columns exist if table was previously created
 ALTER TABLE public.invitations 
 ADD COLUMN IF NOT EXISTS "adminId" UUID REFERENCES auth.users(id) ON DELETE SET NULL;
 
 ALTER TABLE public.invitations 
 ADD COLUMN IF NOT EXISTS "backgroundImage" TEXT NOT NULL DEFAULT 'background_1';
+
+ALTER TABLE public.invitations 
+ADD COLUMN IF NOT EXISTS "inviteCard" JSONB DEFAULT '{}'::jsonb;
+
+ALTER TABLE public.invitations 
+ADD COLUMN IF NOT EXISTS "messageSection" JSONB DEFAULT '{}'::jsonb;
+
+ALTER TABLE public.invitations 
+ADD COLUMN IF NOT EXISTS "countdownSection" JSONB DEFAULT '{}'::jsonb;
+
+ALTER TABLE public.invitations 
+ADD COLUMN IF NOT EXISTS "social" JSONB DEFAULT '{}'::jsonb;
+
+ALTER TABLE public.invitations 
+ADD COLUMN IF NOT EXISTS "footer" JSONB DEFAULT '{}'::jsonb;
+
+ALTER TABLE public.invitations 
+ADD COLUMN IF NOT EXISTS "music" JSONB DEFAULT '{}'::jsonb;
+
+-- Reload PostgREST schema cache
+NOTIFY pgrst, 'reload schema';
 
 -- 4. Indexes for fast lookups
 CREATE INDEX IF NOT EXISTS idx_invitations_slug ON public.invitations (slug);

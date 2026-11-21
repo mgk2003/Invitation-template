@@ -1,0 +1,80 @@
+{
+  "slug": "yasar-weds-ayisha",
+  "backgroundImage": "background_1",
+  "couple": {
+    "groomName": "Yasar",
+    "brideName": "Ayisha",
+    "logoAlt": "Yasar & Ayisha Wedding Logo",
+    "photoAlt": "Yasar & Ayisha Wedding Ceremony"
+  },
+  "dates": {
+    "weddingDatetime": "2026-12-13T10:00:00",
+    "weddingDateDisplay": "13 DECEMBER 2026",
+    "saveTheDateDisplay": "DECEMBER 13 - 2026",
+    "weddingTimeDisplay": "10:00 AM ONWARDS"
+  },
+  "hero": {
+    "introText": "Together with their families, you are cordially invited to celebrate the Nikah & Wedding of"
+  },
+  "inviteCard": {
+    "loveMessage": "Two hearts, one journey, in the light of Allah's blessings.",
+    "subtitle": "Son of Mr. & Mrs. Mohammed Mansoor and Daughter of Mr. & Mrs. Abdul Rahim request the honour of your presence and warm prayers."
+  },
+  "events": [
+    {
+      "title": "Nikah & Wedding Reception",
+      "date": "Sunday, 13 December 2026",
+      "venue": "Adams Mahal, Anada Nagar, Karaikudi",
+      "time": "10:00 AM Onwards",
+      "mapLink": "https://maps.google.com/?q=Adams+Mahal,+Anada+Nagar,+Karaikudi"
+    }
+  ],
+  "meetSection": {
+    "labelTop": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+    "title": "Our Blessed Journey",
+    "sectionHeading": "In The Light of Allah's Blessings",
+    "bio": "With the grace of Almighty Allah and the heartfelt blessings of our loving parents, Mr. & Mrs. Mohammed Mansoor and Mr. & Mrs. Abdul Rahim, we unite our lives in marriage. Two hearts embarking on one shared lifelong journey. We cordially invite you and your family to grace our celebration and bless our union."
+  },
+  "messageSection": {
+    "title": "Your Presence Is Our Blessing",
+    "paragraph1": "Your presence will make our auspicious day truly memorable and complete.",
+    "paragraph2": "We warmly await the honor of your company as we commence this chapter of our lives at Adams Mahal, Karaikudi.",
+    "ctaBadge": "With Love — Yasar & Ayisha Families"
+  },
+  "countdownSection": {
+    "gettingMarriedText": "WE ARE GETTING MARRIED IN",
+    "message": "Counting down the days to our blessed wedding celebration!"
+  },
+  "thingsToKnow": {
+    "labelTop": "GUEST GUIDANCE",
+    "title": "Things to Know",
+    "description": "Essential event information for our cherished guests attending the wedding.",
+    "surpriseMessage": "Your warm presence and prayers are the greatest gift to us!",
+    "tips": [
+      {
+        "iconType": "map",
+        "title": "Venue & Parking",
+        "text": "The wedding will take place at Adams Mahal, Anada Nagar, Karaikudi. Ample parking facilities are arranged for all guests."
+      },
+      {
+        "iconType": "hashtag",
+        "title": "Wedding Hashtag",
+        "text": "Capture and celebrate the joyous moments with us on social media using #YasarWedsAyisha"
+      }
+    ]
+  },
+  "social": {
+    "instagramHandle": "yasar_ayisha_wedding",
+    "instagramLink": "https://instagram.com",
+    "instagramHandle2": "",
+    "instagramLink2": ""
+  },
+  "footer": {
+    "credit": "Designed with love for Yasar & Ayisha Wedding Celebration"
+  },
+  "music": {
+    "src": "/assets/sample-audio.mp3",
+    "volume": 0.5
+  }
+}
+
