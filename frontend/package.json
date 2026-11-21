@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@reduxjs/toolkit": "^2.2.1",
+    "@supabase/supabase-js": "^2.119.2",
     "antd": "^5.14.0",
     "dayjs": "^1.11.10",
     "framer-motion": "^12.38.0",

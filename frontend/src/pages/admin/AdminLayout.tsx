@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import { useDispatch } from 'react-redux';
 import { sidebarCollapsedAtom, currentUserAtom } from '../../atoms';
 import { logout } from '../../store/authSlice';
+import { supabase } from '../../lib/supabase';
 import { FiCompass, FiPlusCircle, FiLogOut, FiMenu, FiUser } from 'react-icons/fi';
 
 export const AdminLayout: React.FC = () => {
@@ -15,6 +16,7 @@ export const AdminLayout: React.FC = () => {
   const location = useLocation();
 
   const handleLogout = () => {
+    supabase.auth.signOut().catch(() => {});
     dispatch(logout());
     setCurrentUser(null);
     navigate('/admin/login');

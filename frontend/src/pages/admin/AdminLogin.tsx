@@ -79,16 +79,16 @@ export const AdminLogin: React.FC = () => {
             <div className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-                  Username
+                  Email or Username
                 </label>
                 <Form.Item
                   name="username"
-                  rules={[{ required: true, message: 'Please input admin username' }]}
+                  rules={[{ required: true, message: 'Please input admin email or username' }]}
                   className="mb-0"
                 >
                   <AppInput
                     type="text"
-                    placeholder="Enter admin username"
+                    placeholder="admin@example.com or admin"
                   />
                 </Form.Item>
               </div>
