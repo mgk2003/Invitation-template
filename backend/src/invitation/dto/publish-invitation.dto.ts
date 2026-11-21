@@ -10,7 +10,7 @@ import {
   Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PublishCoupleDto {
   @ApiProperty()
@@ -259,6 +259,11 @@ export class PublishInvitationDto {
   @IsNotEmpty()
   @Matches(/^[a-z0-9-]+$/, { message: 'Slug can only contain lowercase letters, numbers, and hyphens' })
   slug: string;
+
+  @ApiPropertyOptional({ example: 'background_1' })
+  @IsOptional()
+  @IsString()
+  backgroundImage?: string;
 
   @ApiProperty()
   @ValidateNested()

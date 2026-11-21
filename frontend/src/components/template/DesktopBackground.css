@@ -18,7 +18,7 @@
 .desktop-bg-blur {
   position: absolute;
   inset: -10%;
-  background-image: url('/assets/background_mobile.png');
+  background-image: url('/assets/background_1.png');
   background-size: cover;
   background-position: center top;
   filter: blur(70px) brightness(0.28) saturate(1.5);

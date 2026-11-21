@@ -71,6 +71,11 @@ export class CreateDraftInvitationDto {
   @Matches(/^[a-z0-9-]+$/, { message: 'Slug can only contain lowercase letters, numbers, and hyphens' })
   slug: string;
 
+  @ApiPropertyOptional({ example: 'background_1' })
+  @IsOptional()
+  @IsString()
+  backgroundImage?: string;
+
   @ApiProperty()
   @ValidateNested()
   @Type(() => DraftCoupleDto)

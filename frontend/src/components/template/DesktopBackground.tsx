@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { getBackgroundImageUrl } from '../../types/wedding';
 import './DesktopBackground.css';
 
-const DesktopBackground: React.FC = () => {
+interface DesktopBackgroundProps {
+  backgroundImage?: string;
+}
+
+const DesktopBackground: React.FC<DesktopBackgroundProps> = ({ backgroundImage }) => {
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
@@ -19,7 +24,10 @@ const DesktopBackground: React.FC = () => {
   return (
     <div className="desktop-bg-container" aria-hidden="true">
       {/* Blurred mobile background overlay */}
-      <div className="desktop-bg-blur" />
+      <div
+        className="desktop-bg-blur"
+        style={{ backgroundImage: `url(${getBackgroundImageUrl(backgroundImage)})` }}
+      />
 
       {/* Animated glowing ambient orbs */}
       <motion.div

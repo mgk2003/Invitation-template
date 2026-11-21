@@ -86,6 +86,7 @@ export interface WeddingContent {
   _id?: string;
   slug: string;
   status: InvitationStatus;
+  backgroundImage?: string;
   couple: Couple;
   dates: Dates;
   hero: Hero;
@@ -102,3 +103,42 @@ export interface WeddingContent {
   updatedAt?: string;
   views?: number;
 }
+
+export interface BackgroundOption {
+  id: string;
+  name: string;
+  description: string;
+  src: string;
+}
+
+export const BACKGROUND_OPTIONS: BackgroundOption[] = [
+  {
+    id: 'background_1',
+    name: 'Theme 1 (Royal Purple & Gold)',
+    description: 'Deep royal purple tapestry with luminous gold sparkle accents',
+    src: '/assets/background_1.png',
+  },
+  {
+    id: 'background_2',
+    name: 'Theme 2 (Vintage Gold & Maroon)',
+    description: 'Warm traditional elegance with intricate ornamental motifs',
+    src: '/assets/background_2.png',
+  },
+  {
+    id: 'background_3',
+    name: 'Theme 3 (Celestial Starlight)',
+    description: 'Enchanting ambient atmosphere with radiant starlight illumination',
+    src: '/assets/background_3.png',
+  },
+];
+
+export const getBackgroundImageUrl = (bgId?: string): string => {
+  if (!bgId) return '/assets/background_1.png';
+  const matched = BACKGROUND_OPTIONS.find((opt) => opt.id === bgId);
+  if (matched) return matched.src;
+  if (bgId.startsWith('/') || bgId.startsWith('http')) return bgId;
+  if (bgId.endsWith('.png') || bgId.endsWith('.jpg') || bgId.endsWith('.webp')) {
+    return `/assets/${bgId}`;
+  }
+  return `/assets/${bgId}.png`;
+};

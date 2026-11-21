@@ -186,6 +186,9 @@ export class Invitation {
   @Prop({ required: true, enum: InvitationStatus, default: InvitationStatus.DRAFT })
   status: InvitationStatus;
 
+  @Prop({ default: 'background_1' })
+  backgroundImage: string;
+
   @Prop({ type: Couple, required: true })
   couple: Couple;
 

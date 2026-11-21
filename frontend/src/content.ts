@@ -5,6 +5,7 @@ export type { EventItem, TipItem, WeddingContent } from './types/wedding';
 const defaultContent: WeddingContent = {
   slug: 'sample-wedding',
   status: 'Active',
+  backgroundImage: 'background_1',
   couple: {
     groomName: 'Naveen',
     brideName: 'Nandhini',

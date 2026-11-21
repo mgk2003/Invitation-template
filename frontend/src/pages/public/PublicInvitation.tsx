@@ -3,6 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useGetPublicInvitationQuery } from '../../store/services/invitationApi';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
+import { getBackgroundImageUrl } from '../../types/wedding';
 
 import DesktopBackground from '../../components/template/DesktopBackground';
 import HeroSection from '../../components/template/HeroSection';
@@ -62,10 +63,13 @@ export const PublicInvitation: React.FC = () => {
   return (
     <div className="app-container">
       {/* Luxury Desktop Background */}
-      <DesktopBackground />
+      <DesktopBackground backgroundImage={content.backgroundImage} />
 
       {/* Main invitation mobile mockup frame */}
-      <div className="app-wrapper">
+      <div
+        className="app-wrapper"
+        style={{ backgroundImage: `url(${getBackgroundImageUrl(content.backgroundImage)})` }}
+      >
         <div className="desktop-phone-notch" />
         <MusicPlayer music={content.music} />
 

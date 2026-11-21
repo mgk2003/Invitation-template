@@ -14,6 +14,7 @@ import {
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import { showApiErrorModal } from '../../utils/showApiErrorModal';
 import AppInput from '../../components/common/AppInput';
+import { BACKGROUND_OPTIONS } from '../../types/wedding';
 import {
   FiArrowLeft,
   FiSave,
@@ -29,7 +30,7 @@ import {
 } from 'react-icons/fi';
 
 const tabs = [
-  { id: 'general', label: '1. Slug & URL' },
+  { id: 'general', label: '1. Slug & Theme' },
   { id: 'couple', label: '2. Couple Details' },
   { id: 'dates', label: '3. Wedding Dates' },
   { id: 'hero', label: '4. Hero & Card' },
@@ -38,6 +39,80 @@ const tabs = [
   { id: 'tips', label: '7. Tips & Info' },
   { id: 'social', label: '8. Music & Footer' },
 ];
+
+const BackgroundSelector: React.FC<{
+  value?: string;
+  onChange?: (val: string) => void;
+}> = ({ value = 'background_1', onChange }) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {BACKGROUND_OPTIONS.map((option) => {
+        const isSelected = value === option.id;
+        return (
+          <div
+            key={option.id}
+            onClick={() => onChange?.(option.id)}
+            className={`group relative rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer flex flex-col ${isSelected
+                ? 'border-violet-500 bg-violet-950/25 shadow-lg shadow-violet-500/25 ring-2 ring-violet-500/40'
+                : 'border-zinc-800 bg-zinc-950/60 hover:border-zinc-700 hover:bg-zinc-900/60'
+              }`}
+          >
+            {/* Visual Phone Mockup Thumbnail */}
+            <div className="relative w-full h-44 sm:h-52 overflow-hidden bg-zinc-950 flex items-center justify-center">
+              <img
+                src={option.src}
+                alt={option.name}
+                className={`w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105 ${isSelected ? 'brightness-105' : 'brightness-90 opacity-80 group-hover:opacity-100'
+                  }`}
+              />
+
+              {/* Shading overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 pointer-events-none" />
+
+              {/* Mini Simulated Invite Card Overlay */}
+              <div className="absolute inset-x-5 top-6 bottom-6 rounded-xl border border-amber-400/40 bg-black/40 backdrop-blur-[2px] p-2 flex flex-col items-center justify-center pointer-events-none text-center">
+                <span className="text-[10px] text-amber-200/90 font-serif tracking-widest uppercase">Save The Date</span>
+                <span className="text-xs text-white font-serif font-bold mt-1 tracking-wider">Wedding</span>
+                <div className="w-8 h-px bg-amber-400/50 mt-1.5" />
+              </div>
+
+              {/* Status Badge */}
+              <div className="absolute top-2.5 right-2.5">
+                {isSelected ? (
+                  <span className="flex items-center gap-1 px-2.5 py-1 bg-violet-600 text-white text-[11px] font-bold rounded-full shadow-md shadow-violet-600/50">
+                    <FiCheckCircle className="text-xs" /> Selected
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 bg-black/60 text-zinc-400 text-[10px] font-medium rounded-full border border-white/10 group-hover:text-white transition-colors">
+                    Click to select
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Card Content Footer */}
+            <div className="p-3.5 flex flex-col justify-between flex-1 bg-zinc-950/80 border-t border-zinc-850/80">
+              <div>
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <h4 className={`text-sm font-serif font-bold truncate ${isSelected ? 'text-violet-300' : 'text-zinc-200 group-hover:text-white'}`}>
+                    {option.name}
+                  </h4>
+                  <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${isSelected ? 'border-violet-500 bg-violet-600' : 'border-zinc-600 bg-transparent'
+                    }`}>
+                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
+                  {option.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export const InvitationForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -78,6 +153,7 @@ export const InvitationForm: React.FC = () => {
 
   const tabMapping: Record<string, string> = {
     slug: 'general',
+    backgroundImage: 'general',
     couple: 'couple',
     dates: 'dates',
     hero: 'hero',
@@ -98,6 +174,7 @@ export const InvitationForm: React.FC = () => {
 
     const requiredPaths = [
       ['slug'],
+      ['backgroundImage'],
       ['couple', 'groomName'],
       ['couple', 'brideName'],
       ['dates', 'weddingDatetime'],
@@ -150,7 +227,7 @@ export const InvitationForm: React.FC = () => {
     const newStatuses: Record<string, 'complete' | 'incomplete' | 'error'> = {};
 
     const tabFields: Record<string, any[][]> = {
-      general: [['slug']],
+      general: [['slug'], ['backgroundImage']],
       couple: [['couple', 'groomName'], ['couple', 'brideName']],
       dates: [['dates', 'weddingDatetime'], ['dates', 'weddingDateDisplay'], ['dates', 'saveTheDateDisplay'], ['dates', 'weddingTimeDisplay']],
       hero: [['hero', 'introText'], ['inviteCard', 'loveMessage'], ['inviteCard', 'subtitle']],
@@ -274,6 +351,7 @@ export const InvitationForm: React.FC = () => {
     if (existingData) {
       const formattedValues = {
         ...existingData,
+        backgroundImage: existingData.backgroundImage || 'background_1',
         dates: {
           ...existingData.dates,
           weddingDatetime: existingData.dates?.weddingDatetime
@@ -285,6 +363,7 @@ export const InvitationForm: React.FC = () => {
       calculateProgressAndStatuses(formattedValues);
     } else if (!isEdit) {
       form.resetFields();
+      form.setFieldsValue({ backgroundImage: 'background_1' });
       calculateProgressAndStatuses(form.getFieldsValue(true));
     }
   }, [existingData, isEdit, form]);
@@ -333,6 +412,7 @@ export const InvitationForm: React.FC = () => {
   const getPayload = (values: any) => {
     return {
       ...values,
+      backgroundImage: values.backgroundImage || 'background_1',
       slug: values.slug?.toLowerCase().replace(/\s+/g, '-').trim(),
       dates: {
         ...values.dates,
@@ -450,6 +530,7 @@ export const InvitationForm: React.FC = () => {
       // Filter only necessary text content for export
       const necessaryPayload = {
         slug: payload.slug,
+        backgroundImage: payload.backgroundImage || 'background_1',
         couple: {
           groomName: payload.couple?.groomName || '',
           brideName: payload.couple?.brideName || '',
@@ -558,6 +639,10 @@ export const InvitationForm: React.FC = () => {
             return;
           }
 
+          if (!jsonContent.backgroundImage) {
+            jsonContent.backgroundImage = 'background_1';
+          }
+
           // Dynamic slug generation if slug is missing from the imported JSON
           if (!jsonContent.slug && jsonContent.couple?.groomName && jsonContent.couple?.brideName) {
             const groomClean = String(jsonContent.couple.groomName)
@@ -623,6 +708,7 @@ export const InvitationForm: React.FC = () => {
     try {
       const values = await form.validateFields([
         'slug',
+        'backgroundImage',
         ['couple', 'groomName'],
         ['couple', 'brideName'],
         ['dates', 'weddingDatetime'],
@@ -844,8 +930,8 @@ export const InvitationForm: React.FC = () => {
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer border ${activeTab === tab.id
-                      ? 'bg-violet-600/10 text-violet-400 border-violet-500/20 shadow-sm'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-850/50 border-transparent'
+                    ? 'bg-violet-600/10 text-violet-400 border-violet-500/20 shadow-sm'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-850/50 border-transparent'
                     }`}
                 >
                   <span className="truncate">{tab.label}</span>
@@ -871,12 +957,38 @@ export const InvitationForm: React.FC = () => {
           <div className="flex-1 w-full bg-zinc-900 border border-zinc-800/80 p-6 rounded-2xl shadow-xl min-h-[450px] flex flex-col justify-between">
             <div>
               {/* Tab 1: General Info */}
-              <div className={`space-y-5 animate-in fade-in slide-in-from-top-1.5 duration-200 ${activeTab === 'general' ? '' : 'hidden'}`}>
+              <div className={`space-y-6 animate-in fade-in slide-in-from-top-1.5 duration-200 ${activeTab === 'general' ? '' : 'hidden'}`}>
                 <div>
-                  <h3 className="text-lg font-serif font-bold text-white mb-1">Unique URL Configuration</h3>
-                  <p className="text-xs text-zinc-400">Define the unique URL path slug where your invitation will be published.</p>
+                  <h3 className="text-lg font-serif font-bold text-white mb-1">Background Theme & URL</h3>
+                  <p className="text-xs text-zinc-400">Choose your template background image and define the unique URL path slug for your invitation.</p>
                 </div>
                 <div className="h-px bg-zinc-850 w-full" />
+
+                {/* 3 Background Image Options Selector */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wider block">
+                        Select Template Background
+                      </span>
+                      <span className="text-xs text-zinc-400">
+                        Choose 1 of the 3 templates below. The selected design will be displayed in the template.
+                      </span>
+                    </div>
+                  </div>
+
+                  <Form.Item
+                    name="backgroundImage"
+                    initialValue="background_1"
+                    rules={[{ required: true, message: 'Please select a background theme' }]}
+                    className="mb-0"
+                  >
+                    <BackgroundSelector />
+                  </Form.Item>
+                </div>
+
+                <div className="h-px bg-zinc-850/60 w-full" />
+
                 <Form.Item
                   name="slug"
                   label={<span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Unique URL Slug</span>}
