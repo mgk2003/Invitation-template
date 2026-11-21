@@ -14,7 +14,7 @@ import {
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import { showApiErrorModal } from '../../utils/showApiErrorModal';
 import AppInput from '../../components/common/AppInput';
-import { BACKGROUND_OPTIONS } from '../../types/wedding';
+import { BACKGROUND_OPTIONS, BackgroundOption } from '../../types/wedding';
 import {
   FiArrowLeft,
   FiSave,
@@ -27,6 +27,8 @@ import {
   FiUpload,
   FiDownload,
   FiMoreVertical,
+  FiEye,
+  FiExternalLink,
 } from 'react-icons/fi';
 
 const tabs = [
@@ -44,73 +46,213 @@ const BackgroundSelector: React.FC<{
   value?: string;
   onChange?: (val: string) => void;
 }> = ({ value = 'background_1', onChange }) => {
+  const [previewOption, setPreviewOption] = useState<BackgroundOption | null>(null);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {BACKGROUND_OPTIONS.map((option) => {
-        const isSelected = value === option.id;
-        return (
-          <div
-            key={option.id}
-            onClick={() => onChange?.(option.id)}
-            className={`group relative rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer flex flex-col ${isSelected
-                ? 'border-violet-500 bg-violet-950/25 shadow-lg shadow-violet-500/25 ring-2 ring-violet-500/40'
-                : 'border-zinc-800 bg-zinc-950/60 hover:border-zinc-700 hover:bg-zinc-900/60'
-              }`}
-          >
-            {/* Visual Phone Mockup Thumbnail */}
-            <div className="relative w-full h-44 sm:h-52 overflow-hidden bg-zinc-950 flex items-center justify-center">
-              <img
-                src={option.src}
-                alt={option.name}
-                className={`w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105 ${isSelected ? 'brightness-105' : 'brightness-90 opacity-80 group-hover:opacity-100'
-                  }`}
-              />
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {BACKGROUND_OPTIONS.map((option) => {
+          const isSelected = value === option.id;
+          return (
+            <div
+              key={option.id}
+              onClick={() => onChange?.(option.id)}
+              className={`group relative rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer flex flex-col ${isSelected
+                  ? 'border-violet-500 bg-violet-950/25 shadow-lg shadow-violet-500/25 ring-2 ring-violet-500/40'
+                  : 'border-zinc-800 bg-zinc-950/60 hover:border-zinc-700 hover:bg-zinc-900/60'
+                }`}
+            >
+              {/* Visual Thumbnail Area - Centered Phone Frame focusing top Bride & Groom */}
+              <div
+                className="relative w-full py-4 px-3 bg-zinc-950 flex items-center justify-center cursor-pointer overflow-hidden border-b border-zinc-850"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPreviewOption(option);
+                }}
+                title="Click to preview full design"
+              >
+                {/* Centered Phone Silhouette Preview */}
+                <div className="relative w-36 sm:w-40 aspect-[426/1024] rounded-2xl overflow-hidden border-2 border-amber-400/35 shadow-xl bg-[#0a021e] group-hover:border-violet-500/70 transition-all duration-300">
+                  <img
+                    src={option.previewSrc}
+                    alt={option.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
 
-              {/* Shading overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 pointer-events-none" />
+                  {/* Subtle bottom vignette */}
+                  <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
 
-              {/* Mini Simulated Invite Card Overlay */}
-              <div className="absolute inset-x-5 top-6 bottom-6 rounded-xl border border-amber-400/40 bg-black/40 backdrop-blur-[2px] p-2 flex flex-col items-center justify-center pointer-events-none text-center">
-                <span className="text-[10px] text-amber-200/90 font-serif tracking-widest uppercase">Save The Date</span>
-                <span className="text-xs text-white font-serif font-bold mt-1 tracking-wider">Wedding</span>
-                <div className="w-8 h-px bg-amber-400/50 mt-1.5" />
+                  {/* Tagline at bottom */}
+                  <div className="absolute bottom-2 inset-x-1.5 text-center pointer-events-none">
+                    <span className="text-[9px] text-zinc-300 font-serif tracking-wider uppercase bg-black/70 px-1.5 py-0.5 rounded border border-white/10 block truncate">
+                      {option.tagline}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Top-left Quick Preview Pill */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPreviewOption(option);
+                  }}
+                  className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-black/80 hover:bg-violet-600 text-zinc-300 hover:text-white border border-white/10 text-[10px] font-semibold flex items-center gap-1 transition-all shadow-md z-10 backdrop-blur-sm cursor-pointer"
+                >
+                  <FiEye className="text-xs" /> Preview
+                </button>
+
+                {/* Status Badge */}
+                <div className="absolute top-2.5 right-2.5 z-10">
+                  {isSelected ? (
+                    <span className="flex items-center gap-1 px-2.5 py-1 bg-violet-600 text-white text-[11px] font-bold rounded-full shadow-md shadow-violet-600/50">
+                      <FiCheckCircle className="text-xs" /> Selected
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 bg-black/80 text-zinc-400 text-[10px] font-medium rounded-full border border-white/10 group-hover:text-white transition-colors backdrop-blur-sm">
+                      Select
+                    </span>
+                  )}
+                </div>
               </div>
 
-              {/* Status Badge */}
-              <div className="absolute top-2.5 right-2.5">
-                {isSelected ? (
-                  <span className="flex items-center gap-1 px-2.5 py-1 bg-violet-600 text-white text-[11px] font-bold rounded-full shadow-md shadow-violet-600/50">
-                    <FiCheckCircle className="text-xs" /> Selected
-                  </span>
-                ) : (
-                  <span className="px-2 py-0.5 bg-black/60 text-zinc-400 text-[10px] font-medium rounded-full border border-white/10 group-hover:text-white transition-colors">
-                    Click to select
-                  </span>
-                )}
-              </div>
-            </div>
+              {/* Card Content Footer */}
+              <div className="p-3.5 flex flex-col justify-between flex-1 bg-zinc-950/80 border-t border-zinc-850/80">
+                <div>
+                  <div className="flex items-center justify-between gap-1 mb-1.5">
+                    <h4 className={`text-sm font-serif font-bold truncate ${isSelected ? 'text-violet-300' : 'text-zinc-200 group-hover:text-white'}`}>
+                      {option.name}
+                    </h4>
+                    <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${isSelected ? 'border-violet-500 bg-violet-600' : 'border-zinc-600 bg-transparent'
+                      }`}>
+                      {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
+                    {option.description}
+                  </p>
+                </div>
 
-            {/* Card Content Footer */}
-            <div className="p-3.5 flex flex-col justify-between flex-1 bg-zinc-950/80 border-t border-zinc-850/80">
-              <div>
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <h4 className={`text-sm font-serif font-bold truncate ${isSelected ? 'text-violet-300' : 'text-zinc-200 group-hover:text-white'}`}>
-                    {option.name}
-                  </h4>
-                  <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center shrink-0 ${isSelected ? 'border-violet-500 bg-violet-600' : 'border-zinc-600 bg-transparent'
-                    }`}>
-                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                <div className="mt-3 pt-2 border-t border-zinc-850/50 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreviewOption(option);
+                    }}
+                    className="text-[11px] text-violet-400 hover:text-violet-300 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <FiEye className="text-xs" /> View Full Preview
+                  </button>
+
+                  <span className={`text-[10px] font-mono ${isSelected ? 'text-violet-400 font-bold' : 'text-zinc-500'}`}>
+                    {isSelected ? 'ACTIVE' : 'CHOOSE'}
                   </span>
                 </div>
-                <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
-                  {option.description}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Background Preview Modal */}
+      <Modal
+        open={Boolean(previewOption)}
+        onCancel={() => setPreviewOption(null)}
+        footer={null}
+        centered
+        width={780}
+        destroyOnClose
+        title={
+          <div className="flex items-center gap-2 text-white font-serif text-lg">
+            <FiEye className="text-violet-400" />
+            <span>{previewOption?.name}</span>
+          </div>
+        }
+      >
+        {previewOption && (
+          <div className="py-2">
+            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
+              {/* Phone Mockup Frame with Hand-Cropped Preview */}
+              <div className="w-full max-w-[280px] shrink-0 mx-auto">
+                <div className="relative rounded-[28px] overflow-hidden border-4 border-amber-400/50 shadow-2xl bg-[#0a021e] aspect-[426/1024]">
+                  <img
+                    src={previewOption.previewSrc}
+                    alt={previewOption.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <p className="text-[11px] text-zinc-400 text-center mt-2 font-mono">
+                  Curated Mobile Frame View
                 </p>
+              </div>
+
+              {/* Details & Selection Controls on Right */}
+              <div className="flex-1 flex flex-col justify-between self-stretch space-y-5">
+                <div className="space-y-3">
+                  <div>
+                    <span className="text-[11px] uppercase tracking-wider text-violet-400 font-bold font-mono">
+                      Theme Details
+                    </span>
+                    <h3 className="text-xl font-serif font-bold text-white mt-0.5">
+                      {previewOption.name}
+                    </h3>
+                    <p className="text-xs text-amber-300/90 font-medium mt-1">
+                      {previewOption.tagline}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-zinc-950/80 border border-zinc-800 space-y-2">
+                    <h5 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+                      Design & Cultural Atmosphere
+                    </h5>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                      {previewOption.description}
+                    </p>
+                  </div>
+
+                  <div className="text-xs text-zinc-500 space-y-1 font-mono">
+                    <div>Asset Path: <span className="text-zinc-400">{previewOption.src}</span></div>
+                    <div>Applied On: <span className="text-emerald-400">Mobile Mockup + Desktop Ambient Blur</span></div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3 pt-4 border-t border-zinc-800">
+                  {value === previewOption.id ? (
+                    <div className="flex-1 w-full py-2.5 px-4 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                      <FiCheckCircle className="text-sm" /> Currently Selected Theme
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange?.(previewOption.id);
+                        setPreviewOption(null);
+                        notification.success({
+                          message: 'Theme Selected',
+                          description: `${previewOption.name} is now selected for this invitation.`,
+                        });
+                      }}
+                      className="flex-1 w-full py-2.5 px-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-violet-500/25 cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <FiCheckCircle className="text-sm" /> Select This Theme
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => window.open(previewOption.src, '_blank')}
+                    className="w-full sm:w-auto py-2.5 px-4 bg-zinc-950 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <FiExternalLink className="text-sm" /> View High-Res
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        );
-      })}
-    </div>
+        )}
+      </Modal>
+    </>
   );
 };
 
