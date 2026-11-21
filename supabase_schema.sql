@@ -74,6 +74,9 @@ ADD COLUMN IF NOT EXISTS "footer" JSONB DEFAULT '{}'::jsonb;
 ALTER TABLE public.invitations 
 ADD COLUMN IF NOT EXISTS "music" JSONB DEFAULT '{}'::jsonb;
 
+ALTER TABLE public.invitations 
+ADD COLUMN IF NOT EXISTS "wishesCount" INTEGER DEFAULT 0;
+
 -- Reload PostgREST schema cache
 NOTIFY pgrst, 'reload schema';
 
@@ -168,6 +171,21 @@ BEGIN
     UPDATE public.invitations
     SET views = COALESCE(views, 0) + 1
     WHERE slug = LOWER(TRIM(p_slug));
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 8b. Increment Wishes Count RPC Function (Public Guest Reactions)
+CREATE OR REPLACE FUNCTION increment_invitation_wishes(p_slug TEXT)
+RETURNS INT AS $$
+DECLARE
+    v_count INT;
+BEGIN
+    UPDATE public.invitations
+    SET "wishesCount" = COALESCE("wishesCount", 0) + 1
+    WHERE slug = LOWER(TRIM(p_slug))
+    RETURNING "wishesCount" INTO v_count;
+
+    RETURN COALESCE(v_count, 1);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

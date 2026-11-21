@@ -7,9 +7,9 @@ const ScrollIndicator: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const winScroll = window.scrollY || document.documentElement.scrollTop;
-      
-      // Hide when scrolled 200px down - more stable than using innerHeight
-      if (winScroll > 200) {
+
+      // Hide smoothly as soon as user starts scrolling down
+      if (winScroll > 45) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
@@ -18,7 +18,7 @@ const ScrollIndicator: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

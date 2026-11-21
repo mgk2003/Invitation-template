@@ -32,6 +32,7 @@ import {
   FiMoreVertical,
   FiEye,
   FiExternalLink,
+  FiHeart,
 } from 'react-icons/fi';
 
 const tabs = [
@@ -1003,9 +1004,21 @@ export const InvitationForm: React.FC = () => {
             <FiArrowLeft className="text-lg" />
           </button>
           <div>
-            <h1 className="text-2xl font-serif font-bold text-white tracking-wide bg-gradient-to-r from-violet-400 to-indigo-300 bg-clip-text text-transparent">
-              {isEdit ? 'Edit Wedding CMS' : 'Create New Wedding Invitation'}
-            </h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl font-serif font-bold text-white tracking-wide bg-gradient-to-r from-violet-400 to-indigo-300 bg-clip-text text-transparent">
+                {isEdit ? 'Edit Wedding Invitation' : 'Create New Wedding Invitation'}
+              </h1>
+              {isEdit && existingData && (
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center gap-1.5" title="Total Views">
+                    <FiEye className="text-zinc-400" /> {existingData.views || 0} views
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 flex items-center gap-1.5" title="Total Wishes & Du'a Received">
+                    <FiHeart className="text-rose-400" /> {existingData.wishesCount || 0} wishes
+                  </span>
+                </div>
+              )}
+            </div>
             <p className="text-xs text-zinc-400 font-mono mt-0.5">Configure invitation page custom contents</p>
           </div>
         </div>

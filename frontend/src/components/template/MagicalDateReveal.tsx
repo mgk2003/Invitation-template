@@ -7,6 +7,7 @@ interface MagicalDateRevealProps {
   onClose: () => void;
   date: string;
   timeDisplay: string;
+  coupleName?: string;
 }
 
 const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({
@@ -14,7 +15,15 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({
   onClose,
   date,
   timeDisplay,
+  coupleName,
 }) => {
+  const handleAddToCalendar = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const title = encodeURIComponent(`Wedding Celebration of ${coupleName || 'the Couple'}`);
+    const details = encodeURIComponent(`You are cordially invited to celebrate the wedding of ${coupleName || 'the Couple'}.\nDate: ${date}\nTime: ${timeDisplay}`);
+    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}`;
+    window.open(googleCalendarUrl, '_blank');
+  };
   useEffect(() => {
     const preventDefault = (e: Event) => e.preventDefault();
 
@@ -23,12 +32,14 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({
       document.documentElement.style.overflow = 'hidden';
       document.body.style.height = '100%';
       document.documentElement.style.height = '100%';
+      document.body.classList.add('date-reveal-active');
       window.addEventListener('touchmove', preventDefault, { passive: false });
     } else {
       document.body.style.overflow = 'unset';
       document.documentElement.style.overflow = 'unset';
       document.body.style.height = 'unset';
       document.documentElement.style.height = 'unset';
+      document.body.classList.remove('date-reveal-active');
       window.removeEventListener('touchmove', preventDefault);
     }
     return () => {
@@ -36,6 +47,7 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({
       document.documentElement.style.overflow = 'unset';
       document.body.style.height = 'unset';
       document.documentElement.style.height = 'unset';
+      document.body.classList.remove('date-reveal-active');
       window.removeEventListener('touchmove', preventDefault);
     };
   }, [isVisible]);
@@ -75,7 +87,19 @@ const MagicalDateReveal: React.FC<MagicalDateRevealProps> = ({
             <div className="magical-sparkle-icon">✦</div>
             <h2 className="magical-date-text">{date}</h2>
             <p className="magical-time-text">{timeDisplay}</p>
+
+            <button
+              type="button"
+              onClick={handleAddToCalendar}
+              className="magical-calendar-btn"
+              title="Add to Google Calendar"
+            >
+              <span>📅</span>
+              <span>Add to Calendar</span>
+            </button>
+
             <div className="magical-sparkle-icon">✦</div>
+            <p className="magical-click-close">Click anywhere to close</p>
           </motion.div>
         </motion.div>
       )}

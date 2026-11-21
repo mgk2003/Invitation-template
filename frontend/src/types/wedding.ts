@@ -115,6 +115,7 @@ export interface WeddingContent {
   createdAt?: string;
   updatedAt?: string;
   views?: number;
+  wishesCount?: number;
 }
 
 export interface BackgroundOption {

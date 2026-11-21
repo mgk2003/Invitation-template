@@ -65,35 +65,37 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ music }) => {
   }
 
   return (
-    <div className="music-player-fixed">
+    <>
       <audio ref={audioRef} src={musicUrl} loop preload="auto" />
-      <button
-        className={`music-toggle-btn ${isPlaying ? 'is-playing' : 'is-paused'}`}
-        onClick={togglePlay}
-        type="button"
-      >
-        <div className="music-icon-wrapper">
-          {isPlaying ? (
-            <svg viewBox="0 0 24 24" fill="currentColor" className="music-svg">
-              <rect x="6" y="4" width="4" height="16" rx="1" />
-              <rect x="14" y="4" width="4" height="16" rx="1" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="currentColor" className="music-svg">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
-        </div>
-
-        {isPlaying && (
-          <div className="music-bars">
-            <div className="bar b1" />
-            <div className="bar b2" />
-            <div className="bar b3" />
+      <div className="music-player-fixed">
+        <button
+          className={`music-toggle-btn ${isPlaying ? 'is-playing' : 'is-paused'}`}
+          onClick={togglePlay}
+          type="button"
+        >
+          <div className="music-icon-wrapper">
+            {isPlaying ? (
+              <svg viewBox="0 0 24 24" fill="currentColor" className="music-svg">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="currentColor" className="music-svg">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
           </div>
-        )}
-      </button>
-    </div>
+
+          {isPlaying && (
+            <div className="music-bars">
+              <div className="bar b1" />
+              <div className="bar b2" />
+              <div className="bar b3" />
+            </div>
+          )}
+        </button>
+      </div>
+    </>
   );
 };
 

@@ -256,8 +256,8 @@ export const SuperAdminUsers: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <Avatar
                             className={`font-bold shrink-0 ${isSuper
-                                ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white shadow-md shadow-amber-500/20'
-                                : 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-md'
+                              ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white shadow-md shadow-amber-500/20'
+                              : 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-md'
                               }`}
                           >
                             {(admin.name || admin.email || 'A')[0].toUpperCase()}

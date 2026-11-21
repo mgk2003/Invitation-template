@@ -58,6 +58,32 @@
   color: #ffffff;
 }
 
+.magical-calendar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  margin: 15px 0 10px;
+  border-radius: 50px;
+  background: rgba(232, 213, 163, 0.15);
+  border: 1.5px solid #e8d5a3;
+  color: #ffffff;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 15px rgba(232, 213, 163, 0.2);
+}
+
+.magical-calendar-btn:hover {
+  background: rgba(232, 213, 163, 0.3);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 25px rgba(232, 213, 163, 0.4);
+}
+
 .magical-click-close {
   font-family: 'Montserrat', sans-serif;
   font-size: 0.8rem;
@@ -70,4 +96,15 @@
 @keyframes pulse-gold {
   from { transform: scale(1); opacity: 0.5; }
   to { transform: scale(1.2); opacity: 1; }
+}
+
+/* Instantly hide all floating controls when Save Date Modal is open */
+body.date-reveal-active .music-player-fixed,
+body.date-reveal-active .envelope-reopen-fixed,
+body.date-reveal-active .scroll-final-guide,
+body.date-reveal-active .blessing-reaction-container {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }

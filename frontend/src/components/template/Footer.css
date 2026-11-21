@@ -1,7 +1,13 @@
 .footer {
-  padding: 60px 20px 40px;
+  padding: 60px 20px 110px;
   text-align: center;
   position: relative;
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 50px 16px 125px;
+  }
 }
 
 .footer-inner {

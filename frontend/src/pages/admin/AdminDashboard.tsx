@@ -40,6 +40,7 @@ import {
   FiAlertCircle,
   FiCheckSquare,
   FiUsers,
+  FiHeart,
 } from 'react-icons/fi';
 
 export const AdminDashboard: React.FC = () => {
@@ -80,6 +81,7 @@ export const AdminDashboard: React.FC = () => {
   const [deleteInvitation, { isLoading: isDeleting }] = useDeleteInvitationMutation();
 
   const counts = data?.counts || { total: 0, draft: 0, active: 0, inactive: 0, completed: 0 };
+  const totalWishes = data?.items?.reduce((acc: number, curr: WeddingContent) => acc + (curr.wishesCount || 0), 0) || 0;
 
   const handleStatusToggle = async (record: WeddingContent) => {
     const nextStatus: 'Active' | 'Inactive' = record.status === 'Active' ? 'Inactive' : 'Active';
@@ -199,11 +201,11 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-xl hover:border-violet-500/20 transition-all flex items-center justify-between glow-border-violet">
           <div>
             <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
-              Total Cards
+              Total Invitations
             </div>
             <div className="text-3xl font-bold text-white mt-1">{counts.total}</div>
           </div>
@@ -257,6 +259,18 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div className="w-12 h-12 bg-violet-600/15 rounded-xl flex items-center justify-center text-violet-300 text-xl shrink-0">
             <FiCheckSquare />
+          </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-xl hover:border-rose-500/30 transition-all flex items-center justify-between glow-border-rose">
+          <div>
+            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1">
+              Guest Wishes
+            </div>
+            <div className="text-3xl font-bold text-rose-400 mt-1">{totalWishes}</div>
+          </div>
+          <div className="w-12 h-12 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-400 text-xl shrink-0">
+            <FiHeart />
           </div>
         </div>
       </div>
@@ -389,7 +403,7 @@ export const AdminDashboard: React.FC = () => {
                     Wedding Date {renderSortIndicator('weddingDate')}
                   </th>
                   <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6">Views</th>
+                  <th className="py-4 px-6">Views &amp; Wishes</th>
                   <th className="py-4 px-6">Public Link</th>
                   <th
                     className="py-4 px-6 cursor-pointer hover:text-white transition-colors"
@@ -471,11 +485,17 @@ export const AdminDashboard: React.FC = () => {
                           </div>
                         </td>
 
-                        {/* Views */}
+                        {/* Views & Wishes */}
                         <td className="py-4.5 px-6">
-                          <div className="flex items-center gap-1.5 text-sm font-semibold text-zinc-300 font-mono">
-                            <FiEye className="text-zinc-500 text-base" />
-                            <span>{record.views || 0}</span>
+                          <div className="flex flex-col gap-1 font-mono text-xs">
+                            <div className="flex items-center gap-1.5 font-semibold text-zinc-300" title="Total Views">
+                              <FiEye className="text-zinc-500 text-sm" />
+                              <span>{record.views || 0} views</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 font-semibold text-rose-400" title="Total Wishes & Du'a Received">
+                              <FiHeart className="text-rose-500 text-sm" />
+                              <span>{record.wishesCount || 0} wishes</span>
+                            </div>
                           </div>
                         </td>
 

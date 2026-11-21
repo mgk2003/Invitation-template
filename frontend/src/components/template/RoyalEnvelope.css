@@ -1,0 +1,448 @@
+/* ============================================================
+   ROYAL WAX SEAL ENVELOPE CEREMONY
+   Luxury Digital Wedding Unveiling Experience
+   ============================================================ */
+
+.royal-envelope-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #18092e 0%, #0c0317 60%, #05010a 100%);
+  overflow: hidden;
+  padding: 20px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Ambient Floating Golden Stardust */
+.royal-stardust-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.royal-stardust-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fef08a;
+  box-shadow: 0 0 10px #fde047, 0 0 20px #eab308;
+  animation: stardust-float 8s infinite ease-in-out;
+  opacity: 0.6;
+}
+
+@keyframes stardust-float {
+  0% {
+    transform: translateY(100vh) scale(0.4);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  80% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* Skip Button */
+.royal-skip-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  padding: 8px 18px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(232, 213, 163, 0.3);
+  color: #e8d5a3;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.royal-skip-btn:hover {
+  background: rgba(232, 213, 163, 0.2);
+  border-color: #e8d5a3;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Envelope Container with 3D Depth */
+.royal-envelope-stage {
+  position: relative;
+  width: 92%;
+  max-width: 390px;
+  perspective: 1200px;
+  z-index: 5;
+}
+
+.royal-envelope-body {
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  background: linear-gradient(150deg, #1f1238 0%, #15092a 50%, #0d031c 100%);
+  border: 1.5px solid rgba(232, 213, 163, 0.45);
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.85),
+    0 0 50px rgba(212, 175, 55, 0.2),
+    inset 0 0 35px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 34px 22px 28px;
+  overflow: visible;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Ornate Golden Filigree Corners */
+.royal-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.royal-corner-tl {
+  top: 12px;
+  left: 12px;
+  border-top: 1.5px solid #e8d5a3;
+  border-left: 1.5px solid #e8d5a3;
+}
+
+.royal-corner-tl::after {
+  content: '✦';
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-size: 9px;
+  color: #e8d5a3;
+}
+
+.royal-corner-tr {
+  top: 12px;
+  right: 12px;
+  border-top: 1.5px solid #e8d5a3;
+  border-right: 1.5px solid #e8d5a3;
+}
+
+.royal-corner-tr::after {
+  content: '✦';
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 9px;
+  color: #e8d5a3;
+}
+
+.royal-corner-bl {
+  bottom: 12px;
+  left: 12px;
+  border-bottom: 1.5px solid #e8d5a3;
+  border-left: 1.5px solid #e8d5a3;
+}
+
+.royal-corner-bl::after {
+  content: '✦';
+  position: absolute;
+  bottom: 2px;
+  left: 3px;
+  font-size: 9px;
+  color: #e8d5a3;
+}
+
+.royal-corner-br {
+  bottom: 12px;
+  right: 12px;
+  border-bottom: 1.5px solid #e8d5a3;
+  border-right: 1.5px solid #e8d5a3;
+}
+
+.royal-corner-br::after {
+  content: '✦';
+  position: absolute;
+  bottom: 2px;
+  right: 3px;
+  font-size: 9px;
+  color: #e8d5a3;
+}
+
+/* Header Content on Envelope */
+.royal-invitation-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  color: #e8d5a3;
+  text-transform: uppercase;
+  margin-top: 4px;
+  margin-bottom: 14px;
+  text-shadow: 0 0 10px rgba(232, 213, 163, 0.5);
+  opacity: 0.95;
+  text-align: center;
+}
+
+.royal-envelope-subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  color: rgba(232, 213, 163, 0.85);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.royal-envelope-couple-names {
+  font-family: 'Great Vibes', 'Alex Brush', cursive;
+  font-size: clamp(2.4rem, 8vw, 3.4rem);
+  color: #ffffff;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8), 0 0 25px rgba(232, 213, 163, 0.5);
+  margin-bottom: 18px;
+  word-break: break-word;
+}
+
+.royal-envelope-couple-names .royal-amp {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: #e8d5a3;
+  margin: 0 8px;
+}
+
+/* Royal Golden Center Ornament (Replaces the circular wax seal) */
+.royal-envelope-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 75%;
+  max-width: 240px;
+  margin: 4px 0 18px;
+}
+
+.royal-ornament-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232, 213, 163, 0.65), transparent);
+}
+
+.royal-ornament-icon {
+  font-size: 1.4rem;
+  filter: drop-shadow(0 0 12px rgba(234, 179, 8, 0.7));
+  animation: ornament-pulse 3s infinite ease-in-out;
+}
+
+@keyframes ornament-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.5));
+  }
+
+  50% {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 16px rgba(254, 240, 138, 0.9));
+  }
+}
+
+.royal-envelope-date-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #fef08a;
+  padding: 5px 18px;
+  border-radius: 30px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(232, 213, 163, 0.35);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Luxury Open Button */
+.royal-open-btn-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
+.royal-open-invitation-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 32px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #d4af37 0%, #b8860b 50%, #fef08a 100%);
+  color: #1a0826;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(212, 175, 55, 0.45);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: open-btn-shimmer 2.4s infinite ease-in-out;
+}
+
+@keyframes open-btn-shimmer {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.35);
+  }
+
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 32px rgba(254, 240, 138, 0.6);
+  }
+}
+
+.royal-open-invitation-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.7),
+    0 0 38px rgba(254, 240, 138, 0.75);
+}
+
+.royal-open-invitation-btn:active {
+  transform: scale(0.97);
+}
+
+.royal-btn-sparkle {
+  color: #ffffff;
+  font-size: 0.9rem;
+  text-shadow: 0 0 6px #ffffff;
+}
+
+/* ============================================================
+   RESPONSIVE OPTIMIZATIONS (MOBILE SCREENS)
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .royal-envelope-overlay {
+    padding: 16px;
+  }
+
+  .royal-envelope-stage {
+    max-width: 350px;
+    width: 100%;
+  }
+
+  .royal-envelope-body {
+    padding: 28px 16px 24px;
+    border-radius: 18px;
+  }
+
+  .royal-invitation-badge {
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    margin-bottom: 8px;
+  }
+
+  .royal-envelope-subtitle {
+    font-size: 0.64rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+  }
+
+  .royal-envelope-couple-names {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  .royal-envelope-ornament {
+    margin: 2px 0 12px;
+  }
+
+  .royal-envelope-date-badge {
+    font-size: 0.7rem;
+    padding: 4px 14px;
+    margin-bottom: 16px;
+  }
+
+  .royal-open-invitation-btn {
+    padding: 11px 26px;
+    font-size: 0.74rem;
+    letter-spacing: 0.18em;
+  }
+}
+
+@media (max-height: 640px) {
+  .royal-envelope-body {
+    padding: 22px 14px 18px;
+  }
+
+  .royal-envelope-couple-names {
+    font-size: 2.1rem;
+    margin-bottom: 8px;
+  }
+
+  .royal-envelope-ornament {
+    margin: 2px 0 8px;
+  }
+
+  .royal-envelope-date-badge {
+    margin-bottom: 12px;
+  }
+}
+
+/* ============================================================
+   OPENING TRANSITION (When Clicked)
+   ============================================================ */
+
+.royal-envelope-overlay.is-opening {
+  pointer-events: none;
+}
+
+.royal-envelope-overlay.is-opening .royal-envelope-body {
+  animation: envelope-slide-open 1s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes envelope-slide-open {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.04) translateY(-25px);
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: scale(1.15) translateY(-100px);
+    opacity: 0;
+  }
+}

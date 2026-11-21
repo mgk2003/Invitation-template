@@ -30,6 +30,8 @@ export const previewModalAtom = atom<{ open: boolean; slug: string | null }>({
   slug: null,
 });
 
+export const isDateRevealOpenAtom = atom<boolean>(false);
+
 export const paginationAtom = atom<{ page: number; limit: number; sortBy: string; sortOrder: 'asc' | 'desc' }>({
   page: 1,
   limit: 10,

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
+import { useAtom } from 'jotai';
+import { isDateRevealOpenAtom } from '../../atoms';
 import FloatingHearts from './FloatingHearts';
 import MagicalDateReveal from './MagicalDateReveal';
 import './HeroSection.css';
@@ -12,7 +14,7 @@ interface HeroSectionProps {
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ couple, hero, dates }) => {
-  const [isRevealVisible, setIsRevealVisible] = useState(false);
+  const [isRevealVisible, setIsRevealVisible] = useAtom(isDateRevealOpenAtom);
 
   const logoSrc = couple?.logoSrc;
   const hasLogo = !!(logoSrc && logoSrc.trim() !== '');
@@ -73,10 +75,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({ couple, hero, dates }) => {
           transition={{ duration: 1, delay: 1.8 }}
           onClick={() => setIsRevealVisible(true)}
         >
-          <div className="save-date-btn-premium">
-            <span className="btn-sparkle">✧</span>
-            SAVE THE DATE
-            <span className="btn-sparkle">✧</span>
+          <button
+            type="button"
+            className="save-date-btn-premium"
+            title="Tap to reveal wedding date and add to calendar"
+          >
+            <span className="save-date-btn-icon">📅</span>
+            <span className="save-date-btn-text">SAVE THE DATE</span>
+            <span className="save-date-btn-sparkle">✦</span>
+          </button>
+          <div className="save-date-sub-hint">
+            <span>✧</span> Tap to view<span>✧</span>
           </div>
         </motion.div>
       </motion.div>
@@ -86,6 +95,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ couple, hero, dates }) => {
         onClose={() => setIsRevealVisible(false)}
         date={dates.weddingDateDisplay}
         timeDisplay={dates.weddingTimeDisplay}
+        coupleName={couple ? `${couple.groomName} & ${couple.brideName}` : undefined}
       />
     </section>
   );

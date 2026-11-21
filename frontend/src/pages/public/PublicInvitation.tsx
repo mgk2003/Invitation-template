@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAtom } from 'jotai';
+import { isDateRevealOpenAtom } from '../../atoms';
 import { useGetPublicInvitationQuery } from '../../store/services/invitationApi';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import { getBackgroundImageUrl } from '../../types/wedding';
@@ -17,11 +19,16 @@ import CountdownSection from '../../components/template/CountdownSection';
 import Footer from '../../components/template/Footer';
 import MusicPlayer from '../../components/template/MusicPlayer';
 import ScrollIndicator from '../../components/template/ScrollIndicator';
+import RoyalEnvelope from '../../components/template/RoyalEnvelope';
+import BlessingReaction from '../../components/template/BlessingReaction';
 
 export const PublicInvitation: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get('preview') === 'true';
+
+  const [envelopeOpened, setEnvelopeOpened] = useState(false);
+  const [isDateRevealOpen] = useAtom(isDateRevealOpenAtom);
 
   const { data: content, isLoading, isError } = useGetPublicInvitationQuery(
     { slug: slug || '', preview: isPreview },
@@ -62,6 +69,17 @@ export const PublicInvitation: React.FC = () => {
 
   return (
     <div className="app-container">
+      {/* 1. Standout Royal Wax Seal Envelope Opening Ceremony */}
+      <AnimatePresence>
+        {!envelopeOpened && (
+          <RoyalEnvelope
+            couple={content.couple}
+            dates={content.dates}
+            onOpen={() => setEnvelopeOpened(true)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Luxury Desktop Background */}
       <DesktopBackground backgroundImage={content.backgroundImage} />
 
@@ -72,6 +90,20 @@ export const PublicInvitation: React.FC = () => {
       >
         <div className="desktop-phone-notch" />
         <MusicPlayer music={content.music} />
+
+        {/* Re-open Envelope Button (Symmetrically aligned with Music Player) */}
+        {envelopeOpened && !isDateRevealOpen && (
+          <div className="envelope-reopen-fixed">
+            <button
+              type="button"
+              onClick={() => setEnvelopeOpened(false)}
+              className="envelope-reopen-btn"
+              title="Re-open Royal Envelope"
+            >
+              <span>💌</span>
+            </button>
+          </div>
+        )}
 
         {/* Content scrolls over background */}
         <div className="app-content">
@@ -106,7 +138,15 @@ export const PublicInvitation: React.FC = () => {
           />
           <Footer footer={content.footer} couple={content.couple} />
         </div>
-        <ScrollIndicator />
+        {!isDateRevealOpen && <ScrollIndicator />}
+
+        {/* 2. Standout Interactive Guest Wishes & Du'a Burst */}
+        {envelopeOpened && !isDateRevealOpen && (
+          <BlessingReaction
+            slug={slug || ''}
+            initialCount={content?.wishesCount || 0}
+          />
+        )}
       </div>
     </div>
   );

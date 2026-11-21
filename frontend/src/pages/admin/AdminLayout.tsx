@@ -32,7 +32,7 @@ export const AdminLayout: React.FC = () => {
   const isSuperAdmin = currentUser?.role === 'super_admin';
 
   const handleLogout = () => {
-    supabase.auth.signOut().catch(() => {});
+    supabase.auth.signOut().catch(() => { });
     dispatch(logout());
     setCurrentUser(null);
     navigate('/admin/login');
@@ -76,10 +76,10 @@ export const AdminLayout: React.FC = () => {
   const currentKey = location.pathname.includes('/new')
     ? 'create'
     : location.pathname.includes('/users')
-    ? 'users'
-    : location.pathname.includes('/edit')
-    ? 'edit'
-    : 'dashboard';
+      ? 'users'
+      : location.pathname.includes('/edit')
+        ? 'edit'
+        : 'dashboard';
 
   const menuItems = [
     {
@@ -90,13 +90,13 @@ export const AdminLayout: React.FC = () => {
     },
     ...(isSuperAdmin
       ? [
-          {
-            key: 'users',
-            label: 'Manage Admins',
-            icon: <FiUsers className="text-lg" />,
-            onClick: () => navigate('/admin/users'),
-          },
-        ]
+        {
+          key: 'users',
+          label: 'Manage Admins',
+          icon: <FiUsers className="text-lg" />,
+          onClick: () => navigate('/admin/users'),
+        },
+      ]
       : []),
     {
       key: 'create',
@@ -110,9 +110,8 @@ export const AdminLayout: React.FC = () => {
     <div className="flex h-screen w-screen overflow-hidden bg-zinc-950 text-white font-sans">
       {/* Sidebar Sider */}
       <aside
-        className={`bg-zinc-900 border-r border-zinc-800/80 flex flex-col h-full transition-all duration-300 select-none ${
-          collapsed ? 'w-20' : 'w-64'
-        }`}
+        className={`bg-zinc-900 border-r border-zinc-800/80 flex flex-col h-full transition-all duration-300 select-none ${collapsed ? 'w-20' : 'w-64'
+          }`}
       >
         {/* Sidebar Header */}
         <div className="h-16 flex items-center justify-between px-5 border-b border-zinc-800/80 shrink-0">
@@ -136,11 +135,10 @@ export const AdminLayout: React.FC = () => {
               <button
                 key={item.key}
                 onClick={item.onClick}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer border ${
-                  isActive
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer border ${isActive
                     ? 'bg-violet-600/10 text-violet-400 border-violet-500/20 shadow-md shadow-violet-500/5'
                     : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 border-transparent'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3.5">
                   {item.icon}
@@ -160,11 +158,10 @@ export const AdminLayout: React.FC = () => {
             <div className="flex items-center gap-3 overflow-hidden">
               <Avatar
                 icon={<FiUser className="text-zinc-300" />}
-                className={`font-bold shadow-md flex items-center justify-center shrink-0 ${
-                  isSuperAdmin
+                className={`font-bold shadow-md flex items-center justify-center shrink-0 ${isSuperAdmin
                     ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
                     : 'bg-gradient-to-tr from-violet-600 to-indigo-500 text-white'
-                }`}
+                  }`}
               />
               {!collapsed && (
                 <div className="flex flex-col overflow-hidden">
@@ -283,11 +280,10 @@ export const AdminLayout: React.FC = () => {
           {/* User Info Card */}
           <div className="p-3.5 mb-5 rounded-xl bg-zinc-950/60 border border-zinc-800 flex items-center gap-3">
             <Avatar
-              className={`font-bold shrink-0 ${
-                isSuperAdmin
+              className={`font-bold shrink-0 ${isSuperAdmin
                   ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
                   : 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white'
-              }`}
+                }`}
             >
               {(currentUser?.name || currentUser?.email || 'U')[0].toUpperCase()}
             </Avatar>
@@ -300,11 +296,10 @@ export const AdminLayout: React.FC = () => {
               </div>
             </div>
             <span
-              className={`px-2 py-0.5 rounded text-[11px] font-semibold border shrink-0 ${
-                isSuperAdmin
+              className={`px-2 py-0.5 rounded text-[11px] font-semibold border shrink-0 ${isSuperAdmin
                   ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
                   : 'bg-violet-500/10 text-violet-300 border-violet-500/30'
-              }`}
+                }`}
             >
               {isSuperAdmin ? '👑 Super Admin' : '⚡ Admin'}
             </span>
