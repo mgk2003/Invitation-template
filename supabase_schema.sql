@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS public.invitations (
 -- 3. Indexes for fast lookups
 CREATE INDEX IF NOT EXISTS idx_invitations_slug ON public.invitations (slug);
 CREATE INDEX IF NOT EXISTS idx_invitations_status ON public.invitations (status);
-CREATE INDEX IF NOT EXISTS idx_invitations_wedding_datetime ON public.invitations (((dates->>'weddingDatetime')::timestamptz));
+CREATE INDEX IF NOT EXISTS idx_invitations_wedding_datetime ON public.invitations ((dates->>'weddingDatetime'));
 
 -- 4. Automatically update "updatedAt" column on change
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -129,8 +129,8 @@ BEGIN
            slug ILIKE '%' || p_search || '%' OR 
            couple->>'brideName' ILIKE '%' || p_search || '%' OR 
            couple->>'groomName' ILIKE '%' || p_search || '%')
-      AND (p_start_date IS NULL OR (dates->>'weddingDatetime')::timestamptz >= p_start_date::timestamptz)
-      AND (p_end_date IS NULL OR (dates->>'weddingDatetime')::timestamptz <= p_end_date::timestamptz);
+      AND (p_start_date IS NULL OR dates->>'weddingDatetime' >= p_start_date)
+      AND (p_end_date IS NULL OR dates->>'weddingDatetime' <= p_end_date);
 
     -- Paginated Items
     SELECT COALESCE(jsonb_agg(row_to_json(t)), '[]'::jsonb)
@@ -142,11 +142,11 @@ BEGIN
                slug ILIKE '%' || p_search || '%' OR 
                couple->>'brideName' ILIKE '%' || p_search || '%' OR 
                couple->>'groomName' ILIKE '%' || p_search || '%')
-          AND (p_start_date IS NULL OR (dates->>'weddingDatetime')::timestamptz >= p_start_date::timestamptz)
-          AND (p_end_date IS NULL OR (dates->>'weddingDatetime')::timestamptz <= p_end_date::timestamptz)
+          AND (p_start_date IS NULL OR dates->>'weddingDatetime' >= p_start_date)
+          AND (p_end_date IS NULL OR dates->>'weddingDatetime' <= p_end_date)
         ORDER BY 
-            CASE WHEN p_sort_by = 'weddingDate' AND p_sort_order = 'asc' THEN (dates->>'weddingDatetime')::timestamptz END ASC NULLS LAST,
-            CASE WHEN p_sort_by = 'weddingDate' AND p_sort_order = 'desc' THEN (dates->>'weddingDatetime')::timestamptz END DESC NULLS LAST,
+            CASE WHEN p_sort_by = 'weddingDate' AND p_sort_order = 'asc' THEN dates->>'weddingDatetime' END ASC NULLS LAST,
+            CASE WHEN p_sort_by = 'weddingDate' AND p_sort_order = 'desc' THEN dates->>'weddingDatetime' END DESC NULLS LAST,
             CASE WHEN (p_sort_by IS NULL OR p_sort_by = 'createdAt') AND p_sort_order = 'asc' THEN "createdAt" END ASC,
             CASE WHEN (p_sort_by IS NULL OR p_sort_by = 'createdAt') AND (p_sort_order IS NULL OR p_sort_order = 'desc') THEN "createdAt" END DESC
         LIMIT p_limit
@@ -195,34 +195,41 @@ TO authenticated
 USING (true)
 WITH CHECK (true);
 
--- 10. Storage Bucket Setup (Run if storage extension enabled)
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('invitation-media', 'invitation-media', true)
-ON CONFLICT (id) DO NOTHING;
+-- 10. Storage Bucket Setup (Fail-safe wrapper)
+DO $$ BEGIN
+    INSERT INTO storage.buckets (id, name, public)
+    VALUES ('invitation-media', 'invitation-media', true)
+    ON CONFLICT (id) DO NOTHING;
+EXCEPTION
+    WHEN OTHERS THEN null;
+END $$;
 
--- Storage RLS Policies
-DROP POLICY IF EXISTS "Public can view invitation media" ON storage.objects;
-DROP POLICY IF EXISTS "Authenticated admins can upload invitation media" ON storage.objects;
-DROP POLICY IF EXISTS "Authenticated admins can update invitation media" ON storage.objects;
-DROP POLICY IF EXISTS "Authenticated admins can delete invitation media" ON storage.objects;
+-- Storage RLS Policies (Fail-safe wrapper)
+DO $$ BEGIN
+    DROP POLICY IF EXISTS "Public can view invitation media" ON storage.objects;
+    DROP POLICY IF EXISTS "Authenticated admins can upload invitation media" ON storage.objects;
+    DROP POLICY IF EXISTS "Authenticated admins can update invitation media" ON storage.objects;
+    DROP POLICY IF EXISTS "Authenticated admins can delete invitation media" ON storage.objects;
 
-CREATE POLICY "Public can view invitation media"
-ON storage.objects FOR SELECT
-TO anon, authenticated
-USING (bucket_id = 'invitation-media');
+    CREATE POLICY "Public can view invitation media"
+    ON storage.objects FOR SELECT
+    TO anon, authenticated
+    USING (bucket_id = 'invitation-media');
 
-CREATE POLICY "Authenticated admins can upload invitation media"
-ON storage.objects FOR INSERT
-TO authenticated
-WITH CHECK (bucket_id = 'invitation-media');
+    CREATE POLICY "Authenticated admins can upload invitation media"
+    ON storage.objects FOR INSERT
+    TO authenticated
+    WITH CHECK (bucket_id = 'invitation-media');
 
-CREATE POLICY "Authenticated admins can update invitation media"
-ON storage.objects FOR UPDATE
-TO authenticated
-USING (bucket_id = 'invitation-media');
+    CREATE POLICY "Authenticated admins can update invitation media"
+    ON storage.objects FOR UPDATE
+    TO authenticated
+    USING (bucket_id = 'invitation-media');
 
-CREATE POLICY "Authenticated admins can delete invitation media"
-ON storage.objects FOR DELETE
-TO authenticated
-USING (bucket_id = 'invitation-media');
-
+    CREATE POLICY "Authenticated admins can delete invitation media"
+    ON storage.objects FOR DELETE
+    TO authenticated
+    USING (bucket_id = 'invitation-media');
+EXCEPTION
+    WHEN OTHERS THEN null;
+END $$;
