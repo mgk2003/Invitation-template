@@ -284,7 +284,62 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 13. Get Invitations With Search, Filter, Pagination & Scoped Status Counts
+-- 13. RPC Function: Reset Regular Admin Password (Super Admin Only, Protected from Modifying Super Admins)
+CREATE OR REPLACE FUNCTION reset_admin_password(
+    p_admin_id UUID,
+    p_new_password TEXT
+)
+RETURNS JSONB AS $$
+DECLARE
+    v_caller_role TEXT;
+    v_target_role TEXT;
+    v_target_email TEXT;
+BEGIN
+    -- 1. Check if caller is super_admin
+    SELECT role INTO v_caller_role
+    FROM public.profiles
+    WHERE id = auth.uid();
+
+    IF v_caller_role != 'super_admin' THEN
+        RAISE EXCEPTION 'Access denied. Only Super Admin can change admin passwords.';
+    END IF;
+
+    -- 2. Validate inputs
+    IF p_admin_id IS NULL THEN
+        RAISE EXCEPTION 'Admin ID is required.';
+    END IF;
+
+    IF LENGTH(TRIM(p_new_password)) < 6 THEN
+        RAISE EXCEPTION 'Password must be at least 6 characters long.';
+    END IF;
+
+    -- 3. Check target user exists and is a regular admin (NOT super_admin)
+    SELECT role, email INTO v_target_role, v_target_email
+    FROM public.profiles
+    WHERE id = p_admin_id;
+
+    IF v_target_role IS NULL THEN
+        RAISE EXCEPTION 'Administrator account not found.';
+    END IF;
+
+    IF v_target_role = 'super_admin' THEN
+        RAISE EXCEPTION 'Security Policy: Cannot reset password for a Super Admin account.';
+    END IF;
+
+    -- 4. Update the encrypted password in auth.users
+    UPDATE auth.users
+    SET encrypted_password = crypt(p_new_password, gen_salt('bf')),
+        updated_at = NOW()
+    WHERE id = p_admin_id;
+
+    RETURN jsonb_build_object(
+        'success', true,
+        'message', format('Password successfully updated for %s.', v_target_email)
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 14. Get Invitations With Search, Filter, Pagination & Scoped Status Counts
 CREATE OR REPLACE FUNCTION get_invitations_with_counts(
     p_status TEXT DEFAULT NULL,
     p_search TEXT DEFAULT NULL,

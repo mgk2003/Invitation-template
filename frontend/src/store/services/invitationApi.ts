@@ -530,6 +530,35 @@ export const invitationApi = createApi({
       },
       invalidatesTags: ['AdminUsers'],
     }),
+
+    // Super Admin: Reset Regular Admin Password
+    resetAdminPassword: builder.mutation<
+      { success: boolean; message: string },
+      { adminId: string; newPassword: string }
+    >({
+      async queryFn({ adminId, newPassword }) {
+        try {
+          const { data, error } = await supabase.rpc('reset_admin_password', {
+            p_admin_id: adminId,
+            p_new_password: newPassword,
+          });
+
+          if (error) {
+            return { error: { status: 400, data: { message: error.message } } };
+          }
+
+          return {
+            data: (data as { success: boolean; message: string }) || {
+              success: true,
+              message: 'Password updated successfully',
+            },
+          };
+        } catch (err: any) {
+          return { error: { status: 500, data: { message: err?.message } } };
+        }
+      },
+      invalidatesTags: ['AdminUsers'],
+    }),
   }),
 });
 
@@ -547,4 +576,5 @@ export const {
   useUploadFileMutation,
   useGetAdminsQuery,
   useCreateAdminMutation,
+  useResetAdminPasswordMutation,
 } = invitationApi;

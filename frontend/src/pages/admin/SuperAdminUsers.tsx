@@ -14,7 +14,7 @@ import {
   FiRefreshCw,
 } from 'react-icons/fi';
 import dayjs from 'dayjs';
-import { useGetAdminsQuery, useCreateAdminMutation } from '../../store/services/invitationApi';
+import { useGetAdminsQuery, useCreateAdminMutation, useResetAdminPasswordMutation } from '../../store/services/invitationApi';
 import AppInput from '../../components/common/AppInput';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import type { AdminUser } from '../../types/wedding';
@@ -23,9 +23,14 @@ export const SuperAdminUsers: React.FC = () => {
   const navigate = useNavigate();
   const { data: admins = [], isLoading, isFetching, refetch } = useGetAdminsQuery();
   const [createAdmin, { isLoading: isCreating }] = useCreateAdminMutation();
+  const [resetPassword, { isLoading: isResettingPassword }] = useResetAdminPasswordMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [selectedAdminForPassword, setSelectedAdminForPassword] = useState<AdminUser | null>(null);
+
   const [form] = Form.useForm();
+  const [passwordForm] = Form.useForm();
   const [api, contextHolder] = notification.useNotification();
 
   const superAdminCount = admins.filter((a) => a.role === 'super_admin').length;
@@ -53,6 +58,47 @@ export const SuperAdminUsers: React.FC = () => {
       const msg = err?.data?.message || err?.message || 'Failed to create admin account.';
       api.error({
         message: 'Creation Failed',
+        description: msg,
+        placement: 'topRight',
+      });
+    }
+  };
+
+  const handleOpenPasswordModal = (admin: AdminUser) => {
+    if (admin.role === 'super_admin') {
+      api.warning({
+        message: 'Action Not Permitted',
+        description: 'Super Admin passwords cannot be modified from this interface.',
+        placement: 'topRight',
+      });
+      return;
+    }
+    setSelectedAdminForPassword(admin);
+    passwordForm.resetFields();
+    setIsPasswordModalOpen(true);
+  };
+
+  const handleResetPassword = async (values: any) => {
+    if (!selectedAdminForPassword) return;
+    try {
+      await resetPassword({
+        adminId: selectedAdminForPassword.id,
+        newPassword: values.newPassword,
+      }).unwrap();
+
+      api.success({
+        message: 'Password Changed Successfully',
+        description: `Password for ${selectedAdminForPassword.name || selectedAdminForPassword.email} has been updated.`,
+        placement: 'topRight',
+      });
+
+      setIsPasswordModalOpen(false);
+      setSelectedAdminForPassword(null);
+      passwordForm.resetFields();
+    } catch (err: any) {
+      const msg = err?.data?.message || err?.message || 'Failed to update password.';
+      api.error({
+        message: 'Password Update Failed',
         description: msg,
         placement: 'topRight',
       });
@@ -209,11 +255,10 @@ export const SuperAdminUsers: React.FC = () => {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
                           <Avatar
-                            className={`font-bold shrink-0 ${
-                              isSuper
+                            className={`font-bold shrink-0 ${isSuper
                                 ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white shadow-md shadow-amber-500/20'
                                 : 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-md'
-                            }`}
+                              }`}
                           >
                             {(admin.name || admin.email || 'A')[0].toUpperCase()}
                           </Avatar>
@@ -255,15 +300,33 @@ export const SuperAdminUsers: React.FC = () => {
                       </td>
 
                       <td className="py-4 px-6 text-right">
-                        <button
-                          onClick={() => {
-                            navigate(`/admin/dashboard?adminId=${admin.id}`);
-                          }}
-                          className="px-3 py-1.5 rounded-lg border border-zinc-700 hover:border-violet-500/50 bg-zinc-800/40 hover:bg-violet-600/10 text-zinc-300 hover:text-violet-300 text-xs font-semibold transition-all inline-flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <FiFilter className="text-xs" />
-                          <span>View Invitations</span>
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => {
+                              navigate(`/admin/dashboard?adminId=${admin.id}`);
+                            }}
+                            className="px-3 py-1.5 rounded-lg border border-zinc-700 hover:border-violet-500/50 bg-zinc-800/40 hover:bg-violet-600/10 text-zinc-300 hover:text-violet-300 text-xs font-semibold transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                            title="View invitations assigned to this admin"
+                          >
+                            <FiFilter className="text-xs" />
+                            <span>Invitations</span>
+                          </button>
+
+                          {!isSuper ? (
+                            <button
+                              onClick={() => handleOpenPasswordModal(admin)}
+                              className="px-3 py-1.5 rounded-lg border border-amber-500/30 hover:border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-amber-200 text-xs font-semibold transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
+                              title={`Change password for ${admin.name || admin.email}`}
+                            >
+                              <FiKey className="text-xs" />
+                              <span>Change Password</span>
+                            </button>
+                          ) : (
+                            <span className="text-[11px] text-zinc-500 italic px-2 py-1 select-none">
+                              Super Admin
+                            </span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -394,6 +457,131 @@ export const SuperAdminUsers: React.FC = () => {
             </button>
           </div>
         </Form>
+      </Modal>
+
+      {/* Modal: Change Admin Password */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2 text-white font-serif text-lg">
+            <FiKey className="text-amber-400" />
+            <span>Change Administrator Password</span>
+          </div>
+        }
+        open={isPasswordModalOpen}
+        onCancel={() => {
+          setIsPasswordModalOpen(false);
+          setSelectedAdminForPassword(null);
+          passwordForm.resetFields();
+        }}
+        footer={null}
+        destroyOnClose
+        centered
+        className="luxury-modal"
+      >
+        {selectedAdminForPassword && (
+          <div className="pt-2">
+            {/* Target Admin Card */}
+            <div className="p-3.5 mb-5 rounded-xl bg-zinc-950/60 border border-zinc-800 flex items-center gap-3">
+              <Avatar className="bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold shrink-0">
+                {(selectedAdminForPassword.name || selectedAdminForPassword.email || 'A')[0].toUpperCase()}
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold text-white truncate">
+                  {selectedAdminForPassword.name || 'Unnamed Admin'}
+                </div>
+                <div className="text-xs text-zinc-400 truncate font-mono">
+                  {selectedAdminForPassword.email}
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-violet-500/10 text-violet-300 border border-violet-500/30 shrink-0">
+                ⚡ Admin
+              </span>
+            </div>
+
+            <div className="text-xs text-zinc-400 mb-5 leading-relaxed">
+              Set a new password for this administrator. Their previous password will be immediately invalidated and they can log in using the new credentials.
+            </div>
+
+            <Form
+              form={passwordForm}
+              layout="vertical"
+              onFinish={handleResetPassword}
+            >
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
+                    New Password
+                  </label>
+                  <Form.Item
+                    name="newPassword"
+                    rules={[
+                      { required: true, message: 'Please enter a new password' },
+                      { min: 6, message: 'Password must be at least 6 characters' },
+                    ]}
+                    className="mb-0"
+                  >
+                    <AppInput
+                      type="password"
+                      placeholder="Enter new password (min. 6 characters)"
+                    />
+                  </Form.Item>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
+                    Confirm New Password
+                  </label>
+                  <Form.Item
+                    name="confirmPassword"
+                    dependencies={['newPassword']}
+                    rules={[
+                      { required: true, message: 'Please confirm the new password' },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || getFieldValue('newPassword') === value) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(new Error('The two passwords do not match'));
+                        },
+                      }),
+                    ]}
+                    className="mb-0"
+                  >
+                    <AppInput
+                      type="password"
+                      placeholder="Re-enter new password"
+                    />
+                  </Form.Item>
+                </div>
+              </div>
+
+              <div className="mt-8 flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPasswordModalOpen(false);
+                    setSelectedAdminForPassword(null);
+                    passwordForm.resetFields();
+                  }}
+                  className="px-4 py-2.5 rounded-xl border border-zinc-700 bg-zinc-800/60 hover:bg-zinc-800 text-zinc-300 hover:text-white text-sm font-semibold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isResettingPassword}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 text-white font-semibold text-sm shadow-lg shadow-amber-500/25 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isResettingPassword && (
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  )}
+                  <span>Update Password</span>
+                </button>
+              </div>
+            </Form>
+          </div>
+        )}
       </Modal>
     </div>
   );
