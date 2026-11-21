@@ -85,8 +85,16 @@ export const AdminDashboard: React.FC = () => {
 
   const handleStatusToggle = async (record: WeddingContent) => {
     const nextStatus: 'Active' | 'Inactive' = record.status === 'Active' ? 'Inactive' : 'Active';
+    const invitationId = record.id || record._id;
+    if (!invitationId) {
+      notification.error({
+        message: 'Error',
+        description: 'Invitation ID is missing.',
+      });
+      return;
+    }
     try {
-      await changeStatus({ id: record._id!, status: nextStatus }).unwrap();
+      await changeStatus({ id: invitationId, status: nextStatus }).unwrap();
       notification.success({
         message: 'Status Updated',
         description: `Invitation '${record.slug}' status changed to ${nextStatus}.`,

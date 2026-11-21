@@ -166,6 +166,9 @@ export const invitationApi = createApi({
     getInvitation: builder.query<WeddingContent, string>({
       async queryFn(id) {
         try {
+          if (!id || id === 'undefined') {
+            return { error: { status: 400, data: { message: 'Invalid or missing invitation ID' } } };
+          }
           const { data, error } = await supabase
             .from('invitations')
             .select('*')
@@ -335,6 +338,9 @@ export const invitationApi = createApi({
     updateDraft: builder.mutation<WeddingContent, { id: string; data: Partial<WeddingContent> }>({
       async queryFn({ id, data: updateData }) {
         try {
+          if (!id || id === 'undefined') {
+            return { error: { status: 400, data: { message: 'Invalid or missing invitation ID' } } };
+          }
           const payload: any = { ...updateData };
           if (payload.slug) {
             payload.slug = payload.slug.toLowerCase().trim();
@@ -366,6 +372,9 @@ export const invitationApi = createApi({
     updatePublished: builder.mutation<WeddingContent, { id: string; data: Partial<WeddingContent> }>({
       async queryFn({ id, data: updateData }) {
         try {
+          if (!id || id === 'undefined') {
+            return { error: { status: 400, data: { message: 'Invalid or missing invitation ID' } } };
+          }
           const payload: any = { ...updateData };
           if (payload.slug) {
             payload.slug = payload.slug.toLowerCase().trim();
@@ -410,6 +419,9 @@ export const invitationApi = createApi({
     changeStatus: builder.mutation<WeddingContent, { id: string; status: 'Active' | 'Inactive' }>({
       async queryFn({ id, status }) {
         try {
+          if (!id || id === 'undefined') {
+            return { error: { status: 400, data: { message: 'Invalid or missing invitation ID' } } };
+          }
           const { data, error } = await supabase
             .from('invitations')
             .update({ status })
@@ -432,6 +444,9 @@ export const invitationApi = createApi({
     deleteInvitation: builder.mutation<{ success: boolean }, string>({
       async queryFn(id) {
         try {
+          if (!id || id === 'undefined') {
+            return { error: { status: 400, data: { message: 'Invalid or missing invitation ID' } } };
+          }
           const { error } = await supabase
             .from('invitations')
             .delete()

@@ -880,8 +880,9 @@ export const InvitationForm: React.FC = () => {
       } else {
         const res = await createDraft(payload).unwrap();
         notification.success({ message: 'Draft saved successfully!' });
-        if (res?._id) {
-          navigate(`/admin/invitations/${res._id}/edit`, { replace: true });
+        const newId = res?.id || res?._id;
+        if (newId) {
+          navigate(`/admin/invitations/${newId}/edit`, { replace: true });
         }
       }
     } catch (err: any) {
