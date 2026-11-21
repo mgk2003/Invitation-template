@@ -152,6 +152,14 @@ export const BACKGROUND_OPTIONS: BackgroundOption[] = [
     src: '/assets/background_3.png',
     previewSrc: '/assets/preview_3.jpg',
   },
+  {
+    id: 'background_4',
+    name: 'Theme 4: Sunset Serenade & Coastal Splendor',
+    tagline: 'Warm Romantic Sunset & Floral Horizon',
+    description: 'Breathtaking sunset hues of warm coral, twilight sky, and tranquil coastal vistas framing a picturesque, unforgettable celebration.',
+    src: '/assets/background_4.png',
+    previewSrc: '/assets/preview_4.png',
+  },
 ];
 
 export const getBackgroundImageUrl = (bgId?: string): string => {
