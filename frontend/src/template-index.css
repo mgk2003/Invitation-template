@@ -1,3 +1,11 @@
+:root {
+  --font-script: 'Great Vibes', 'Alex Brush', cursive;
+  --font-royal: 'Cinzel', serif;
+  --font-serif: 'Cormorant Garamond', 'Playfair Display', serif;
+  --font-sans: 'Montserrat', sans-serif;
+  --gold-glow: 0 2px 14px rgba(0, 0, 0, 0.7), 0 0 22px rgba(232, 213, 163, 0.45), 0 0 45px rgba(212, 175, 55, 0.25);
+}
+
 *,
 *::before,
 *::after {

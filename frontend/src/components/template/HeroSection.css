@@ -222,18 +222,21 @@
 
 .hero-couple-names-text .groom-name,
 .hero-couple-names-text .bride-name {
-  font-family: 'Pinyon Script', cursive;
+  font-family: 'Great Vibes', 'Alex Brush', cursive;
   font-weight: 400;
-  font-size: clamp(3rem, 12vw, 4.5rem);
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  font-size: clamp(3.4rem, 13vw, 5rem);
+  color: #ffffff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7), 0 0 24px rgba(232, 213, 163, 0.5), 0 0 45px rgba(212, 175, 55, 0.3);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
 
 .hero-couple-names-text .and-symbol {
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-style: italic;
   color: #e8d5a3;
-  text-shadow: 0 0 10px rgba(232, 213, 163, 0.4);
+  text-shadow: 0 0 12px rgba(232, 213, 163, 0.6);
   line-height: 1;
 }
 

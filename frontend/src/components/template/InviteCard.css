@@ -68,19 +68,22 @@
 }
 
 .invite-name-script {
-  font-family: 'Pinyon Script', cursive;
-  font-size: clamp(3rem, 12vw, 4.5rem);
+  font-family: 'Great Vibes', 'Alex Brush', cursive;
+  font-size: clamp(3.2rem, 12vw, 4.8rem);
   color: #ffffff;
   font-weight: 400;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 0 20px rgba(232, 213, 163, 0.45);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
 
 .invite-ampersand-stylish {
   font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-style: italic;
   color: #e8d5a3;
   margin: -10px 0;
+  text-shadow: 0 0 10px rgba(232, 213, 163, 0.5);
 }
 
 .invite-details-box {
