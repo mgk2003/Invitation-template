@@ -243,7 +243,7 @@ export const AppSlider: React.FC<AppSliderProps> = ({
 // ==========================================
 interface AppInputProps {
   id?: string;
-  type: 'text' | 'textarea' | 'password' | 'number' | 'date' | 'datetime' | 'select' | 'file' | 'slider';
+  type: 'text' | 'email' | 'textarea' | 'password' | 'number' | 'date' | 'datetime' | 'select' | 'file' | 'slider';
   value?: any;
   onChange?: (val: any) => void;
   placeholder?: string;
@@ -380,6 +380,21 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
           max={max}
           step={step}
           disabled={disabled}
+        />
+      );
+
+    case 'email':
+      return (
+        <Input
+          id={id}
+          type="email"
+          value={value || ''}
+          onChange={(e) => onChange?.(e.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          addonBefore={addonBefore}
+          size="large"
+          className={`w-full bg-[#151824] border-gray-700 text-white placeholder-gray-500 font-sans ${className}`}
         />
       );
 

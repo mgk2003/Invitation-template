@@ -27,12 +27,12 @@ import {
   FiCheckCircle,
   FiInfo,
   FiEdit2,
-  FiUpload,
-  FiDownload,
   FiMoreVertical,
   FiEye,
   FiExternalLink,
   FiHeart,
+  FiCopy,
+  FiClipboard,
 } from 'react-icons/fi';
 
 const tabs = [
@@ -299,7 +299,8 @@ export const InvitationForm: React.FC = () => {
 
   const [progress, setProgress] = useState(0);
   const [tabStatuses, setTabStatuses] = useState<Record<string, 'complete' | 'incomplete' | 'error'>>({});
-  const [isImporting, setIsImporting] = useState(false);
+  const [isPasteModalOpen, setIsPasteModalOpen] = useState(false);
+  const [pastedJsonText, setPastedJsonText] = useState('');
 
   const tabMapping: Record<string, string> = {
     slug: 'general',
@@ -678,20 +679,20 @@ export const InvitationForm: React.FC = () => {
   };
 
   // ==========================================
-  // JSON Import / Export Handlers
+  // JSON Copy & Paste Handlers
   // ==========================================
-  const handleExportJson = () => {
+  const handleCopyJson = async () => {
     try {
       const values = form.getFieldsValue(true);
       const payload = getPayload(values);
 
-      // Filter only necessary text content for export
       const necessaryPayload = {
-        slug: payload.slug,
+        slug: payload.slug || '',
         backgroundImage: payload.backgroundImage || 'background_1',
         couple: {
           groomName: payload.couple?.groomName || '',
           brideName: payload.couple?.brideName || '',
+          logoSrc: payload.couple?.logoSrc || '',
           logoAlt: payload.couple?.logoAlt || '',
           photoAlt: payload.couple?.photoAlt || '',
         },
@@ -720,6 +721,7 @@ export const InvitationForm: React.FC = () => {
           title: payload.meetSection?.title || '',
           sectionHeading: payload.meetSection?.sectionHeading || '',
           bio: payload.meetSection?.bio || '',
+          imageSrc: payload.meetSection?.imageSrc || '',
         },
         messageSection: {
           title: payload.messageSection?.title || '',
@@ -751,114 +753,124 @@ export const InvitationForm: React.FC = () => {
         footer: {
           credit: payload.footer?.credit || '',
         },
+        music: {
+          src: payload.music?.src || '',
+          volume: payload.music?.volume ?? 0.7,
+        },
       };
 
-      const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-        JSON.stringify(necessaryPayload, null, 2)
-      )}`;
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute('href', jsonString);
-      downloadAnchor.setAttribute('download', `${payload.slug || 'invitation'}_config.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+      const jsonString = JSON.stringify(necessaryPayload, null, 2);
+      await navigator.clipboard.writeText(jsonString);
 
       notification.success({
-        message: 'Configuration Exported',
-        description: 'Text configuration has been exported as JSON (media excluded).',
+        message: 'JSON Copied to Clipboard',
+        description: 'The invitation configuration has been copied successfully.',
       });
-    } catch (err) {
+    } catch {
       notification.error({
-        message: 'Export Failed',
-        description: 'An error occurred while exporting the configuration.',
+        message: 'Copy Failed',
+        description: 'An error occurred while copying JSON to clipboard.',
       });
     }
   };
 
-  const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsImporting(true);
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      // Small premium simulated delay to display LuxuryLoader
-      setTimeout(() => {
-        try {
-          const jsonContent = JSON.parse(event.target?.result as string);
-
-          if (!jsonContent.couple || !jsonContent.dates) {
-            notification.error({
-              message: 'Import Failed',
-              description: 'Invalid invitation JSON. Must contain couple and dates details.',
-            });
-            setIsImporting(false);
-            return;
-          }
-
-          if (!jsonContent.backgroundImage) {
-            jsonContent.backgroundImage = 'background_1';
-          }
-
-          // Dynamic slug generation if slug is missing from the imported JSON
-          if (!jsonContent.slug && jsonContent.couple?.groomName && jsonContent.couple?.brideName) {
-            const groomClean = String(jsonContent.couple.groomName)
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/^-|-$/g, '');
-            const brideClean = String(jsonContent.couple.brideName)
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, '-')
-              .replace(/^-|-$/g, '');
-
-            let generatedSlug = '';
-            if (groomClean && brideClean) {
-              generatedSlug = `${groomClean}-weds-${brideClean}`;
-            } else if (groomClean) {
-              generatedSlug = groomClean;
-            } else if (brideClean) {
-              generatedSlug = brideClean;
-            }
-
-            if (generatedSlug) {
-              jsonContent.slug = generatedSlug.replace(/-+/g, '-').replace(/^-|-$/g, '');
-            }
-          }
-
-          // Format weddingDatetime as a dayjs object for the Ant Design DatePicker
-          if (jsonContent.dates && jsonContent.dates.weddingDatetime) {
-            jsonContent.dates.weddingDatetime = dayjs(jsonContent.dates.weddingDatetime);
-          }
-
-          form.setFieldsValue(jsonContent);
-          calculateProgressAndStatuses(form.getFieldsValue(true));
-
-          notification.success({
-            message: 'Configuration Imported',
-            description: 'The content has been loaded into the input fields successfully.',
-          });
-        } catch (err) {
-          notification.error({
-            message: 'Import Failed',
-            description: 'Invalid JSON file content.',
-          });
-        } finally {
-          setIsImporting(false);
-        }
-      }, 1000);
-    };
-
-    reader.onerror = () => {
-      notification.error({
-        message: 'Import Failed',
-        description: 'Failed to read the file.',
+  const handleApplyPastedJson = (rawText: string) => {
+    const trimmed = rawText.trim();
+    if (!trimmed) {
+      notification.warning({
+        message: 'Empty JSON',
+        description: 'Please paste valid JSON content before applying.',
       });
-      setIsImporting(false);
-    };
+      return;
+    }
 
-    reader.readAsText(file);
-    e.target.value = '';
+    try {
+      const jsonContent = JSON.parse(trimmed);
+
+      if (typeof jsonContent !== 'object' || jsonContent === null) {
+        notification.error({
+          message: 'Invalid JSON',
+          description: 'The pasted content is not a valid JSON object.',
+        });
+        return;
+      }
+
+      if (!jsonContent.couple && !jsonContent.dates && !jsonContent.slug) {
+        notification.error({
+          message: 'Invalid Format',
+          description: 'The JSON must contain at least wedding couple, dates, or slug details.',
+        });
+        return;
+      }
+
+      if (!jsonContent.backgroundImage) {
+        jsonContent.backgroundImage = 'background_1';
+      }
+
+      // Dynamic slug generation if slug is missing from the pasted JSON
+      if (!jsonContent.slug && jsonContent.couple?.groomName && jsonContent.couple?.brideName) {
+        const groomClean = String(jsonContent.couple.groomName)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '');
+        const brideClean = String(jsonContent.couple.brideName)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '');
+
+        let generatedSlug = '';
+        if (groomClean && brideClean) {
+          generatedSlug = `${groomClean}-weds-${brideClean}`;
+        } else if (groomClean) {
+          generatedSlug = groomClean;
+        } else if (brideClean) {
+          generatedSlug = brideClean;
+        }
+
+        if (generatedSlug) {
+          jsonContent.slug = generatedSlug.replace(/-+/g, '-').replace(/^-|-$/g, '');
+        }
+      }
+
+      // Format weddingDatetime as a dayjs object for the Ant Design DatePicker
+      if (jsonContent.dates && jsonContent.dates.weddingDatetime) {
+        jsonContent.dates.weddingDatetime = dayjs(jsonContent.dates.weddingDatetime);
+      }
+
+      form.setFieldsValue(jsonContent);
+      calculateProgressAndStatuses(form.getFieldsValue(true));
+
+      setIsPasteModalOpen(false);
+      setPastedJsonText('');
+
+      notification.success({
+        message: 'Configuration Applied',
+        description: 'The fields have been populated with the pasted JSON successfully.',
+      });
+    } catch (err: any) {
+      notification.error({
+        message: 'JSON Parse Error',
+        description: err?.message || 'Invalid JSON syntax. Please check for missing quotes or brackets.',
+      });
+    }
+  };
+
+  const handlePasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        setPastedJsonText(text);
+        notification.info({
+          message: 'Clipboard Content Loaded',
+          description: 'Review or edit the JSON, then click "Apply & Populate Fields".',
+        });
+      }
+    } catch {
+      notification.warning({
+        message: 'Clipboard Access Restricted',
+        description: 'Please paste your JSON directly into the box using Ctrl+V / Cmd+V.',
+      });
+    }
   };
 
   // Submit as Draft
@@ -966,30 +978,22 @@ export const InvitationForm: React.FC = () => {
       onClick: onSaveDraft,
       disabled: isDraftSaving || isDraftUpdating,
     },
-    ...(!isEdit
-      ? [
-        {
-          key: 'import_json',
-          label: 'Import JSON',
-          icon: <FiUpload className="text-sm" />,
-          onClick: () => document.getElementById('json-import-file')?.click(),
-        },
-        {
-          key: 'export_json',
-          label: 'Export JSON',
-          icon: <FiDownload className="text-sm" />,
-          onClick: handleExportJson,
-        },
-      ]
-      : []),
+    {
+      key: 'paste_json',
+      label: 'Paste JSON',
+      icon: <FiClipboard className="text-sm" />,
+      onClick: () => setIsPasteModalOpen(true),
+    },
+    {
+      key: 'copy_json',
+      label: 'Copy JSON',
+      icon: <FiCopy className="text-sm" />,
+      onClick: handleCopyJson,
+    },
   ];
 
   if (isEdit && isLoadingExisting) {
     return <LuxuryLoader tip="Loading Invitation Data..." fullScreen={false} />;
-  }
-
-  if (isImporting) {
-    return <LuxuryLoader tip="Importing Wedding Invitation Configuration..." fullScreen={true} />;
   }
 
   return (
@@ -1024,19 +1028,33 @@ export const InvitationForm: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full lg:w-auto justify-end">
-          <input
-            type="file"
-            accept=".json"
-            id="json-import-file"
-            className="hidden"
-            onChange={handleImportJson}
-          />
+        <div className="flex items-center gap-2.5 w-full lg:w-auto justify-end flex-wrap sm:flex-nowrap">
+          {/* Direct Paste JSON Button */}
+          <button
+            type="button"
+            onClick={() => setIsPasteModalOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-zinc-950 border border-zinc-800 hover:border-violet-500/60 text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all shadow-sm cursor-pointer h-10 shrink-0"
+            title="Paste JSON to populate form"
+          >
+            <FiClipboard className="text-sm text-violet-400" />
+            <span>Paste JSON</span>
+          </button>
+
+          {/* Direct Copy JSON Button */}
+          <button
+            type="button"
+            onClick={handleCopyJson}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-zinc-950 border border-zinc-800 hover:border-violet-500/60 text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all shadow-sm cursor-pointer h-10 shrink-0"
+            title="Copy current invitation configuration as JSON"
+          >
+            <FiCopy className="text-sm text-violet-400" />
+            <span>Copy JSON</span>
+          </button>
 
           <button
             onClick={onPublish}
             disabled={isPublishing || isPublishUpdating}
-            className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl border border-transparent shadow-lg shadow-violet-500/25 transition-all cursor-pointer disabled:opacity-55 h-11 lg:h-10 whitespace-nowrap"
+            className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-bold rounded-xl border border-transparent shadow-lg shadow-violet-500/25 transition-all cursor-pointer disabled:opacity-55 h-10 whitespace-nowrap text-xs sm:text-sm"
           >
             <FiSend className="text-base" />
             <span>{isEdit ? 'Update & Publish' : 'Publish Invitation'}</span>
@@ -1049,7 +1067,7 @@ export const InvitationForm: React.FC = () => {
           >
             <button
               type="button"
-              className="flex items-center justify-center p-2.5 bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white rounded-xl transition-all cursor-pointer h-11 lg:h-10 w-11 lg:w-10 shrink-0"
+              className="flex items-center justify-center p-2.5 bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white rounded-xl transition-all cursor-pointer h-10 w-10 shrink-0"
               title="More Actions"
             >
               <FiMoreVertical className="text-lg" />
@@ -1881,6 +1899,71 @@ export const InvitationForm: React.FC = () => {
             <AppInput type="text" placeholder="e.g. #GroomWedsBride" />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* Paste JSON Modal */}
+      <Modal
+        open={isPasteModalOpen}
+        onCancel={() => {
+          setIsPasteModalOpen(false);
+          setPastedJsonText('');
+        }}
+        footer={null}
+        centered
+        width={680}
+        destroyOnClose
+        title={
+          <div className="flex items-center gap-2 text-white font-serif text-lg">
+            <FiClipboard className="text-violet-400" />
+            <span>Paste Invitation JSON</span>
+          </div>
+        }
+      >
+        <div className="py-2 space-y-4">
+          <p className="text-xs text-zinc-400 leading-relaxed">
+            Paste your wedding invitation JSON configuration below to automatically populate all form fields.
+          </p>
+
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider">JSON Content</span>
+            <button
+              type="button"
+              onClick={handlePasteFromClipboard}
+              className="text-xs text-violet-400 hover:text-violet-300 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+            >
+              <FiClipboard className="text-xs" /> Paste from Clipboard
+            </button>
+          </div>
+
+          <textarea
+            value={pastedJsonText}
+            onChange={(e) => setPastedJsonText(e.target.value)}
+            rows={12}
+            placeholder={`{\n  "couple": {\n    "groomName": "Naveen",\n    "brideName": "Nandhini"\n  },\n  "dates": {\n    "weddingDatetime": "2026-07-06T06:15:00"\n  }\n}`}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-zinc-200 font-mono text-xs focus:outline-none focus:border-violet-500 resize-y leading-relaxed"
+          />
+
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-zinc-850">
+            <button
+              type="button"
+              onClick={() => {
+                setIsPasteModalOpen(false);
+                setPastedJsonText('');
+              }}
+              className="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => handleApplyPastedJson(pastedJsonText)}
+              className="px-5 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-violet-500/20 cursor-pointer transition-all flex items-center gap-1.5"
+            >
+              <FiCheckCircle className="text-sm" />
+              <span>Apply & Populate Fields</span>
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Form, notification } from 'antd';
+import { Form, notification, Checkbox } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAtom } from 'jotai';
@@ -18,6 +18,9 @@ export const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const [, setCurrentUser] = useAtom(currentUserAtom);
   const [api, contextHolder] = notification.useNotification();
+
+  const savedEmail = localStorage.getItem('wedding_cms_remembered_email') || '';
+  const wasRemembered = localStorage.getItem('wedding_cms_remember_me') === 'true' || Boolean(savedEmail);
   
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -31,7 +34,16 @@ export const AdminLogin: React.FC = () => {
 
   const onFinish = async (values: any) => {
     try {
-      const res = await login(values).unwrap();
+      const res = await login({ username: values.username, password: values.password }).unwrap();
+
+      if (values.remember) {
+        localStorage.setItem('wedding_cms_remembered_email', values.username.trim());
+        localStorage.setItem('wedding_cms_remember_me', 'true');
+      } else {
+        localStorage.removeItem('wedding_cms_remembered_email');
+        localStorage.removeItem('wedding_cms_remember_me');
+      }
+
       dispatch(setCredentials(res));
       setCurrentUser(res.user);
       api.success({
@@ -78,20 +90,31 @@ export const AdminLogin: React.FC = () => {
             </p>
           </div>
 
-          <Form name="admin_login" onFinish={onFinish} layout="vertical">
+          <Form
+            name="admin_login"
+            onFinish={onFinish}
+            layout="vertical"
+            initialValues={{
+              username: savedEmail,
+              remember: wasRemembered,
+            }}
+          >
             <div className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-                  Email or Username
+                  Email
                 </label>
                 <Form.Item
                   name="username"
-                  rules={[{ required: true, message: 'Please input admin email or username' }]}
+                  rules={[
+                    { required: true, message: 'Please input admin email' },
+                    { type: 'email', message: 'Please enter a valid email address' },
+                  ]}
                   className="mb-0"
                 >
                   <AppInput
-                    type="text"
-                    placeholder="admin@example.com or admin"
+                    type="email"
+                    placeholder="user@crewfotos.com"
                   />
                 </Form.Item>
               </div>
@@ -109,6 +132,14 @@ export const AdminLogin: React.FC = () => {
                     type="password"
                     placeholder="Enter password"
                   />
+                </Form.Item>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <Form.Item name="remember" valuePropName="checked" className="mb-0">
+                  <Checkbox className="text-zinc-400 select-none hover:text-zinc-300">
+                    <span className="text-xs text-zinc-300 font-medium">Remember me</span>
+                  </Checkbox>
                 </Form.Item>
               </div>
             </div>
