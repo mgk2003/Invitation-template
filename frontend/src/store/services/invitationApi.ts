@@ -90,6 +90,10 @@ export const invitationApi = createApi({
             return { data: rpcData as InvitationsResponse };
           }
 
+          if (rpcError) {
+            console.warn('[invitationApi] get_invitations_with_counts RPC warning/fallback:', rpcError);
+          }
+
           // Fallback to direct table queries
           const page = params.page || 1;
           const limit = params.limit || 10;
@@ -117,12 +121,46 @@ export const invitationApi = createApi({
           const isAsc = params.sortOrder === 'asc';
           query = query.order(sortField, { ascending: isAsc }).range(from, to);
 
-          const { data: items, count: totalCount, error: tableError } = await query;
+          const { data: rawItems, count: totalCount, error: tableError } = await query;
           if (tableError) {
             return { error: { status: 500, data: { message: tableError.message } } };
           }
 
-          // Fetch count metrics
+          // Enrich items with admin details for display
+          let items = (rawItems as any[]) || [];
+          if (items.length > 0) {
+            const adminIds = [...new Set(items.map((i) => i.adminId).filter(Boolean))];
+            if (adminIds.length > 0) {
+              const { data: profiles } = await supabase
+                .from('profiles')
+                .select('id, name, email')
+                .in('id', adminIds);
+              if (profiles) {
+                const profileMap = new Map(profiles.map((p) => [p.id, p]));
+                items = items.map((i) => ({
+                  ...i,
+                  adminName: profileMap.get(i.adminId)?.name || undefined,
+                  adminEmail: profileMap.get(i.adminId)?.email || undefined,
+                }));
+              }
+            }
+          }
+
+          // Fetch count metrics (scoped by adminId if provided)
+          let totalAllQuery = supabase.from('invitations').select('*', { count: 'exact', head: true });
+          let draftCountQuery = supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Draft');
+          let activeCountQuery = supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Active');
+          let inactiveCountQuery = supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Inactive');
+          let completedCountQuery = supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Completed');
+
+          if (params.adminId) {
+            totalAllQuery = totalAllQuery.eq('adminId', params.adminId);
+            draftCountQuery = draftCountQuery.eq('adminId', params.adminId);
+            activeCountQuery = activeCountQuery.eq('adminId', params.adminId);
+            inactiveCountQuery = inactiveCountQuery.eq('adminId', params.adminId);
+            completedCountQuery = completedCountQuery.eq('adminId', params.adminId);
+          }
+
           const [
             { count: totalAll },
             { count: draftCount },
@@ -130,11 +168,11 @@ export const invitationApi = createApi({
             { count: inactiveCount },
             { count: completedCount },
           ] = await Promise.all([
-            supabase.from('invitations').select('*', { count: 'exact', head: true }),
-            supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Draft'),
-            supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Active'),
-            supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Inactive'),
-            supabase.from('invitations').select('*', { count: 'exact', head: true }).eq('status', 'Completed'),
+            totalAllQuery,
+            draftCountQuery,
+            activeCountQuery,
+            inactiveCountQuery,
+            completedCountQuery,
           ]);
 
           const total = totalCount || 0;

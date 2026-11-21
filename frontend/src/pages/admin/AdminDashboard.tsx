@@ -54,9 +54,7 @@ export const AdminDashboard: React.FC = () => {
   const [dateFilter, setDateFilter] = useAtom(dateFilterAtom);
   const [pagination, setPagination] = useAtom(paginationAtom);
 
-  const [selectedAdminId, setSelectedAdminId] = useState<string | undefined>(
-    searchParams.get('adminId') || undefined
-  );
+  const selectedAdminId = searchParams.get('adminId') || undefined;
   const { data: adminList = [] } = useGetAdminsQuery(undefined, { skip: !isSuperAdmin });
 
   const [shareSlug, setShareSlug] = useState<string | null>(null);
@@ -76,7 +74,22 @@ export const AdminDashboard: React.FC = () => {
     adminId: selectedAdminId || undefined,
   };
 
-  const { data, isLoading, isFetching, refetch } = useGetInvitationsQuery(queryParams);
+  const { data, isLoading, isFetching, refetch } = useGetInvitationsQuery(queryParams, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  // Ensure fresh filters and state ONLY when the logged-in user changes (account switch/logout)
+  const prevUserIdRef = React.useRef(currentUser?.id);
+  React.useEffect(() => {
+    if (prevUserIdRef.current && prevUserIdRef.current !== currentUser?.id) {
+      setSearch('');
+      setStatusFilter(undefined);
+      setDateFilter([null, null]);
+      setSearchParams({});
+      setPagination({ page: 1, limit: 10, sortBy: 'createdAt', sortOrder: 'desc' });
+    }
+    prevUserIdRef.current = currentUser?.id;
+  }, [currentUser?.id, setSearch, setStatusFilter, setDateFilter, setPagination, setSearchParams]);
   const [changeStatus, { isLoading: isStatusChanging }] = useChangeStatusMutation();
   const [deleteInvitation, { isLoading: isDeleting }] = useDeleteInvitationMutation();
 
@@ -348,20 +361,25 @@ export const AdminDashboard: React.FC = () => {
                 placeholder="Filter by Admin"
                 value={selectedAdminId}
                 onChange={(val) => {
-                  setSelectedAdminId(val || undefined);
-                  if (val) {
-                    setSearchParams({ adminId: val });
-                  } else {
-                    setSearchParams({});
-                  }
+                  setSearchParams((prev) => {
+                    const next = new URLSearchParams(prev);
+                    if (val) {
+                      next.set('adminId', val);
+                    } else {
+                      next.delete('adminId');
+                    }
+                    return next;
+                  });
                   setPagination((prev) => ({ ...prev, page: 1 }));
                 }}
                 options={[
                   { label: 'All Administrators', value: '' },
-                  ...adminList.map((a) => ({
-                    label: `${a.name || a.email} (${a.role === 'super_admin' ? 'Super Admin' : 'Admin'})`,
-                    value: a.id,
-                  })),
+                  ...adminList
+                    .filter((a) => a.role !== 'super_admin')
+                    .map((a) => ({
+                      label: `${a.name || a.email} (Admin)`,
+                      value: a.id,
+                    })),
                 ]}
               />
             </div>
@@ -369,13 +387,36 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {(search || statusFilter || dateFilter[0] || dateFilter[1] || selectedAdminId) && (
-          <div className="flex justify-end mt-3">
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-800/60">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-zinc-400">Active filters:</span>
+              {selectedAdminId && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-violet-500/10 text-violet-300 border border-violet-500/30">
+                  <span>
+                    Admin: {adminList.find((a) => a.id === selectedAdminId)?.name || adminList.find((a) => a.id === selectedAdminId)?.email || 'Filtered'}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setSearchParams((prev) => {
+                        const next = new URLSearchParams(prev);
+                        next.delete('adminId');
+                        return next;
+                      });
+                      setPagination((prev) => ({ ...prev, page: 1 }));
+                    }}
+                    className="hover:text-white cursor-pointer ml-1"
+                    title="Remove admin filter"
+                  >
+                    <FiX className="text-xs" />
+                  </button>
+                </span>
+              )}
+            </div>
             <button
               onClick={() => {
                 setSearch('');
                 setStatusFilter(undefined);
                 setDateFilter([null, null]);
-                setSelectedAdminId(undefined);
                 setSearchParams({});
                 setPagination({ page: 1, limit: 10, sortBy: 'createdAt', sortOrder: 'desc' });
               }}

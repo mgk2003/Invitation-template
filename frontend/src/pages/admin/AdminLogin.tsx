@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAtom } from 'jotai';
 import { useLoginMutation } from '../../store/services/authApi';
 import { setCredentials, logout } from '../../store/authSlice';
+import { invitationApi } from '../../store/services/invitationApi';
 import { supabase } from '../../lib/supabase';
 import { currentUserAtom } from '../../atoms';
 import { motion } from 'framer-motion';
@@ -45,6 +46,7 @@ export const AdminLogin: React.FC = () => {
       }
 
       dispatch(setCredentials(res));
+      dispatch(invitationApi.util.resetApiState());
       setCurrentUser(res.user);
       api.success({
         message: 'Welcome Administrator',

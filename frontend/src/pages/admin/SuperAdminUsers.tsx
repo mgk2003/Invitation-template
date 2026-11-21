@@ -33,9 +33,8 @@ export const SuperAdminUsers: React.FC = () => {
   const [passwordForm] = Form.useForm();
   const [api, contextHolder] = notification.useNotification();
 
-  const superAdminCount = admins.filter((a) => a.role === 'super_admin').length;
-  const regularAdminCount = admins.filter((a) => a.role === 'admin').length;
-  const totalInvitationsManaged = admins.reduce((acc, curr) => acc + (curr.invitationCount || 0), 0);
+  const regularAdmins = admins.filter((a) => a.role !== 'super_admin');
+  const totalInvitationsManaged = regularAdmins.reduce((acc, curr) => acc + (curr.invitationCount || 0), 0);
 
   const handleCreateAdmin = async (values: any) => {
     try {
@@ -43,7 +42,7 @@ export const SuperAdminUsers: React.FC = () => {
         email: values.email.trim(),
         password: values.password,
         name: values.name?.trim(),
-        role: values.role,
+        role: 'admin', // Always create as admin only
       }).unwrap();
 
       api.success({
@@ -146,7 +145,7 @@ export const SuperAdminUsers: React.FC = () => {
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 backdrop-blur-sm shadow-sm relative overflow-hidden group hover:border-violet-500/30 transition-all">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-mono">
@@ -157,39 +156,24 @@ export const SuperAdminUsers: React.FC = () => {
             </div>
           </div>
           <div className="text-3xl font-bold font-serif text-white tracking-tight">
-            {admins.length}
+            {regularAdmins.length}
           </div>
-          <p className="text-xs text-zinc-500 mt-1">Platform staff accounts</p>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 backdrop-blur-sm shadow-sm relative overflow-hidden group hover:border-amber-500/30 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-mono">
-              Super Admins
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
-              <FiShield className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-bold font-serif text-amber-300 tracking-tight">
-            {superAdminCount}
-          </div>
-          <p className="text-xs text-zinc-500 mt-1">Full global control</p>
+          <p className="text-xs text-zinc-500 mt-1">Delegated staff accounts</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 backdrop-blur-sm shadow-sm relative overflow-hidden group hover:border-indigo-500/30 transition-all">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider font-mono">
-              Regular Admins
+              Active Scope
             </span>
             <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
               <FiUser className="w-4 h-4" />
             </div>
           </div>
           <div className="text-3xl font-bold font-serif text-indigo-300 tracking-tight">
-            {regularAdminCount}
+            {regularAdmins.length}
           </div>
-          <p className="text-xs text-zinc-500 mt-1">Scoped to their invitations</p>
+          <p className="text-xs text-zinc-500 mt-1">Scoped to assigned invitations</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 backdrop-blur-sm shadow-sm relative overflow-hidden group hover:border-emerald-500/30 transition-all">
@@ -204,7 +188,7 @@ export const SuperAdminUsers: React.FC = () => {
           <div className="text-3xl font-bold font-serif text-emerald-300 tracking-tight">
             {totalInvitationsManaged}
           </div>
-          <p className="text-xs text-zinc-500 mt-1">Across all administrators</p>
+          <p className="text-xs text-zinc-500 mt-1">Across all team administrators</p>
         </div>
       </div>
 
@@ -216,7 +200,7 @@ export const SuperAdminUsers: React.FC = () => {
             <h2 className="text-base font-semibold text-white">Registered CMS Administrators</h2>
           </div>
           <span className="text-xs text-zinc-400 font-mono">
-            {admins.length} {admins.length === 1 ? 'user' : 'users'}
+            {regularAdmins.length} {regularAdmins.length === 1 ? 'admin' : 'admins'}
           </span>
         </div>
 
@@ -224,7 +208,7 @@ export const SuperAdminUsers: React.FC = () => {
           <div className="p-12">
             <LuxuryLoader tip="Loading Administrators..." fullScreen={false} />
           </div>
-        ) : admins.length === 0 ? (
+        ) : regularAdmins.length === 0 ? (
           <div className="p-12 text-center text-zinc-500">
             <FiUsers className="w-12 h-12 mx-auto mb-3 text-zinc-600" />
             <p className="text-base font-medium text-zinc-400">No administrators found</p>
@@ -245,7 +229,7 @@ export const SuperAdminUsers: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/60 text-sm">
-                {admins.map((admin: AdminUser) => {
+                {regularAdmins.map((admin: AdminUser) => {
                   const isSuper = admin.role === 'super_admin';
                   return (
                     <tr
@@ -288,9 +272,16 @@ export const SuperAdminUsers: React.FC = () => {
                       </td>
 
                       <td className="py-4 px-6">
-                        <span className="font-mono text-zinc-300 bg-zinc-800/60 px-2.5 py-1 rounded-lg border border-zinc-700/50 text-xs font-semibold">
-                          {admin.invitationCount || 0} invitations
-                        </span>
+                        <button
+                          onClick={() => {
+                            navigate(`/admin/dashboard?adminId=${admin.id}`);
+                          }}
+                          className="font-mono text-zinc-300 hover:text-violet-300 bg-zinc-800/60 hover:bg-violet-950/40 px-2.5 py-1 rounded-lg border border-zinc-700/50 hover:border-violet-500/50 text-xs font-semibold cursor-pointer transition-all inline-flex items-center gap-1.5"
+                          title="Filter invitations by this admin"
+                        >
+                          <FiFileText className="text-zinc-500 hover:text-violet-400 text-xs" />
+                          <span>{admin.invitationCount || 0} invitations</span>
+                        </button>
                       </td>
 
                       <td className="py-4 px-6 text-zinc-400 text-xs font-mono">
@@ -408,27 +399,6 @@ export const SuperAdminUsers: React.FC = () => {
                 className="mb-0"
               >
                 <AppInput type="password" placeholder="At least 6 characters" />
-              </Form.Item>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
-                Access Role
-              </label>
-              <Form.Item name="role" className="mb-0">
-                <Select
-                  className="w-full h-11"
-                  options={[
-                    {
-                      value: 'admin',
-                      label: '⚡ Regular Admin (Manages only their assigned invitations)',
-                    },
-                    {
-                      value: 'super_admin',
-                      label: '👑 Super Admin (Full access to all invitations and admin creation)',
-                    },
-                  ]}
-                />
               </Form.Item>
             </div>
           </div>

@@ -1248,10 +1248,12 @@ export const InvitationForm: React.FC = () => {
                         className="w-full h-10"
                         placeholder="Select an admin to assign (or keep as yourself)..."
                         allowClear
-                        options={adminList.map((admin) => ({
-                          value: admin.id,
-                          label: `${admin.name || admin.email} (${admin.role === 'super_admin' ? '👑 Super Admin' : '⚡ Admin'})`,
-                        }))}
+                        options={adminList
+                          .filter((admin) => admin.role !== 'super_admin')
+                          .map((admin) => ({
+                            value: admin.id,
+                            label: `${admin.name || admin.email} (⚡ Admin)`,
+                          }))}
                       />
                     </Form.Item>
                   </div>
