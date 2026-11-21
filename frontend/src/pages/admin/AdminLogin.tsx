@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAtom } from 'jotai';
 import { useLoginMutation } from '../../store/services/authApi';
-import { setCredentials } from '../../store/authSlice';
+import { setCredentials, logout } from '../../store/authSlice';
+import { supabase } from '../../lib/supabase';
 import { currentUserAtom } from '../../atoms';
 import { motion } from 'framer-motion';
 import { showApiErrorModal } from '../../utils/showApiErrorModal';
@@ -18,13 +19,15 @@ export const AdminLogin: React.FC = () => {
   const [, setCurrentUser] = useAtom(currentUserAtom);
   const [api, contextHolder] = notification.useNotification();
   
-  const token = useSelector((state: RootState) => state.auth.token);
-
   useEffect(() => {
-    if (token) {
-      navigate('/admin/dashboard', { replace: true });
-    }
-  }, [token, navigate]);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        dispatch(logout());
+      }
+    });
+  }, [navigate, dispatch]);
 
   const onFinish = async (values: any) => {
     try {
