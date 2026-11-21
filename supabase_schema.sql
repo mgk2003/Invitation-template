@@ -227,7 +227,7 @@ BEGIN
         RAISE EXCEPTION 'An account with email % already exists.', v_clean_email;
     END IF;
 
-    -- Insert into auth.users with encrypted password
+    -- Insert into auth.users with encrypted password and empty string token fields (required by GoTrue)
     INSERT INTO auth.users (
         instance_id,
         id,
@@ -236,6 +236,14 @@ BEGIN
         email,
         encrypted_password,
         email_confirmed_at,
+        confirmation_token,
+        recovery_token,
+        email_change_token_new,
+        email_change,
+        phone_change,
+        phone_change_token,
+        email_change_token_current,
+        reauthentication_token,
         raw_app_meta_data,
         raw_user_meta_data,
         created_at,
@@ -248,6 +256,14 @@ BEGIN
         v_clean_email,
         crypt(p_password, gen_salt('bf')),
         NOW(),
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
         jsonb_build_object('provider', 'email', 'providers', array['email']),
         jsonb_build_object('name', p_name, 'role', p_role),
         NOW(),
@@ -486,6 +502,14 @@ BEGIN
             email,
             encrypted_password,
             email_confirmed_at,
+            confirmation_token,
+            recovery_token,
+            email_change_token_new,
+            email_change,
+            phone_change,
+            phone_change_token,
+            email_change_token_current,
+            reauthentication_token,
             raw_app_meta_data,
             raw_user_meta_data,
             created_at,
@@ -498,6 +522,14 @@ BEGIN
             'superadmin@gmail.com',
             crypt('12345678', gen_salt('bf')),
             NOW(),
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
             jsonb_build_object('provider', 'email', 'providers', array['email']),
             jsonb_build_object('name', 'Super Admin', 'role', 'super_admin'),
             NOW(),
@@ -507,6 +539,14 @@ BEGIN
         UPDATE auth.users
         SET encrypted_password = crypt('12345678', gen_salt('bf')),
             email_confirmed_at = COALESCE(email_confirmed_at, NOW()),
+            confirmation_token = COALESCE(confirmation_token, ''),
+            recovery_token = COALESCE(recovery_token, ''),
+            email_change_token_new = COALESCE(email_change_token_new, ''),
+            email_change = COALESCE(email_change, ''),
+            phone_change = COALESCE(phone_change, ''),
+            phone_change_token = COALESCE(phone_change_token, ''),
+            email_change_token_current = COALESCE(email_change_token_current, ''),
+            reauthentication_token = COALESCE(reauthentication_token, ''),
             updated_at = NOW()
         WHERE id = v_user_id;
     END IF;
