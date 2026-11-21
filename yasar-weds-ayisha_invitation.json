@@ -1,14 +1,15 @@
 {
   "slug": "yasar-weds-ayisha",
-  "backgroundImage": "background_1",
+  "backgroundImage": "background_4",
   "couple": {
     "groomName": "Yasar",
     "brideName": "Ayisha",
+    "logoSrc": "",
     "logoAlt": "Yasar & Ayisha Wedding Logo",
-    "photoAlt": "Yasar & Ayisha Wedding Ceremony"
+    "photoAlt": ""
   },
   "dates": {
-    "weddingDatetime": "2026-12-13T10:00:00",
+    "weddingDatetime": "2026-12-13T04:30:00.000Z",
     "weddingDateDisplay": "13 DECEMBER 2026",
     "saveTheDateDisplay": "DECEMBER 13 - 2026",
     "weddingTimeDisplay": "10:00 AM ONWARDS"
@@ -33,7 +34,8 @@
     "labelTop": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
     "title": "Our Blessed Journey",
     "sectionHeading": "In The Light of Allah's Blessings",
-    "bio": "With the grace of Almighty Allah and the heartfelt blessings of our loving parents, Mr. & Mrs. Mohammed Mansoor and Mr. & Mrs. Abdul Rahim, we unite our lives in marriage. Two hearts embarking on one shared lifelong journey. We cordially invite you and your family to grace our celebration and bless our union."
+    "bio": "With the grace of Almighty Allah and the heartfelt blessings of our loving parents, Mr. & Mrs. Mohammed Mansoor and Mr. & Mrs. Abdul Rahim, we unite our lives in marriage. Two hearts embarking on one shared lifelong journey. We cordially invite you and your family to grace our celebration and bless our union.",
+    "imageSrc": ""
   },
   "messageSection": {
     "title": "Your Presence Is Our Blessing",
@@ -53,7 +55,7 @@
     "tips": [
       {
         "iconType": "map",
-        "title": "Venue & Parking",
+        "title": "Venue",
         "text": "The wedding will take place at Adams Mahal, Anada Nagar, Karaikudi. Ample parking facilities are arranged for all guests."
       },
       {
@@ -64,17 +66,16 @@
     ]
   },
   "social": {
-    "instagramHandle": "yasar_ayisha_wedding",
-    "instagramLink": "https://instagram.com",
+    "instagramHandle": "crew_fotos",
+    "instagramLink": "https://www.instagram.com/_crewfotos_/",
     "instagramHandle2": "",
     "instagramLink2": ""
   },
   "footer": {
-    "credit": "Designed with love for Yasar & Ayisha Wedding Celebration"
+    "credit": "Designed By Crew Fotos"
   },
   "music": {
-    "src": "/assets/sample-audio.mp3",
-    "volume": 0.5
+    "src": "https://vtnjvzurnjgpfcqknsqn.supabase.co/storage/v1/object/public/invitation-media/uploads/1795263006872-ufzb739.mp3",
+    "volume": 0.7
   }
 }
-

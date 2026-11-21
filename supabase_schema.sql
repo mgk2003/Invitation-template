@@ -601,12 +601,12 @@ EXCEPTION
     WHEN OTHERS THEN null;
 END $$;
 
--- 16. Seed Default Super Admin Account (superadmin@gmail.com / 12345678)
+-- 16. Seed Default Super Admin Account (superadmin@crewfotos.com / 12345678)
 DO $$
 DECLARE
     v_user_id UUID;
 BEGIN
-    SELECT id INTO v_user_id FROM auth.users WHERE email = 'superadmin@gmail.com';
+    SELECT id INTO v_user_id FROM auth.users WHERE email = 'superadmin@crewfotos.com';
 
     IF v_user_id IS NULL THEN
         v_user_id := gen_random_uuid();
@@ -635,7 +635,7 @@ BEGIN
             v_user_id,
             'authenticated',
             'authenticated',
-            'superadmin@gmail.com',
+            'superadmin@crewfotos.com',
             crypt('12345678', gen_salt('bf')),
             NOW(),
             '',
@@ -663,12 +663,13 @@ BEGIN
             phone_change_token = COALESCE(phone_change_token, ''),
             email_change_token_current = COALESCE(email_change_token_current, ''),
             reauthentication_token = COALESCE(reauthentication_token, ''),
+            raw_user_meta_data = jsonb_build_object('name', 'Super Admin', 'role', 'super_admin'),
             updated_at = NOW()
         WHERE id = v_user_id;
     END IF;
 
     -- Ensure profile exists with role 'super_admin'
     INSERT INTO public.profiles (id, email, role, name)
-    VALUES (v_user_id, 'superadmin@gmail.com', 'super_admin', 'Super Admin')
+    VALUES (v_user_id, 'superadmin@crewfotos.com', 'super_admin', 'Super Admin')
     ON CONFLICT (id) DO UPDATE SET role = 'super_admin', name = 'Super Admin';
 END $$;
