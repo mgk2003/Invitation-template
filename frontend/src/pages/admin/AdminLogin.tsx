@@ -21,7 +21,7 @@ export const AdminLogin: React.FC = () => {
 
   const savedEmail = localStorage.getItem('wedding_cms_remembered_email') || '';
   const wasRemembered = localStorage.getItem('wedding_cms_remember_me') === 'true' || Boolean(savedEmail);
-  
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -115,6 +115,7 @@ export const AdminLogin: React.FC = () => {
                   <AppInput
                     type="email"
                     placeholder="user@crewfotos.com"
+                    autoComplete="username"
                   />
                 </Form.Item>
               </div>
@@ -131,6 +132,7 @@ export const AdminLogin: React.FC = () => {
                   <AppInput
                     type="password"
                     placeholder="Enter password"
+                    autoComplete="current-password"
                   />
                 </Form.Item>
               </div>

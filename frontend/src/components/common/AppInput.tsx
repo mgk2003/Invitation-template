@@ -247,6 +247,7 @@ interface AppInputProps {
   value?: any;
   onChange?: (val: any) => void;
   placeholder?: string;
+  autoComplete?: string;
   options?: { label: string; value: any }[];
   uploadType?: 'image' | 'audio';
   min?: number;
@@ -266,6 +267,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
     value,
     onChange,
     placeholder,
+    autoComplete,
     options = [],
     uploadType = 'image',
     min,
@@ -299,6 +301,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
           value={value || ''}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
+          autoComplete={autoComplete}
           disabled={disabled}
           size="large"
           className={`w-full bg-[#151824] border-gray-700 text-white font-sans ${className}`}
@@ -391,6 +394,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
           value={value || ''}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
+          autoComplete={autoComplete}
           disabled={disabled}
           addonBefore={addonBefore}
           size="large"
@@ -406,6 +410,7 @@ export const AppInput: React.FC<AppInputProps> = (props) => {
           value={value || ''}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
+          autoComplete={autoComplete}
           disabled={disabled}
           addonBefore={addonBefore}
           size="large"

@@ -686,14 +686,19 @@ export const InvitationForm: React.FC = () => {
       const values = form.getFieldsValue(true);
       const payload = getPayload(values);
 
+      const logoSrc = payload.couple?.logoSrc || values.couple?.logoSrc || existingData?.couple?.logoSrc || '';
+      const photoSrc = payload.couple?.photoSrc || values.couple?.photoSrc || existingData?.couple?.photoSrc || '';
+      const musicSrc = payload.music?.src || values.music?.src || existingData?.music?.src || '';
+
       const necessaryPayload = {
         slug: payload.slug || '',
         backgroundImage: payload.backgroundImage || 'background_1',
         couple: {
           groomName: payload.couple?.groomName || '',
           brideName: payload.couple?.brideName || '',
-          logoSrc: payload.couple?.logoSrc || '',
+          logoSrc: logoSrc,
           logoAlt: payload.couple?.logoAlt || '',
+          photoSrc: photoSrc,
           photoAlt: payload.couple?.photoAlt || '',
         },
         dates: {
@@ -721,7 +726,6 @@ export const InvitationForm: React.FC = () => {
           title: payload.meetSection?.title || '',
           sectionHeading: payload.meetSection?.sectionHeading || '',
           bio: payload.meetSection?.bio || '',
-          imageSrc: payload.meetSection?.imageSrc || '',
         },
         messageSection: {
           title: payload.messageSection?.title || '',
@@ -754,8 +758,8 @@ export const InvitationForm: React.FC = () => {
           credit: payload.footer?.credit || '',
         },
         music: {
-          src: payload.music?.src || '',
-          volume: payload.music?.volume ?? 0.7,
+          src: musicSrc,
+          volume: payload.music?.volume ?? existingData?.music?.volume ?? 0.7,
         },
       };
 
@@ -829,6 +833,19 @@ export const InvitationForm: React.FC = () => {
 
         if (generatedSlug) {
           jsonContent.slug = generatedSlug.replace(/-+/g, '-').replace(/^-|-$/g, '');
+        }
+      }
+
+      // Normalize couple photo and logo sources if present under alternative keys
+      if (jsonContent.couple) {
+        if (!jsonContent.couple.photoSrc && jsonContent.meetSection?.imageSrc) {
+          jsonContent.couple.photoSrc = jsonContent.meetSection.imageSrc;
+        }
+        if (!jsonContent.couple.photoSrc && jsonContent.couple.imageSrc) {
+          jsonContent.couple.photoSrc = jsonContent.couple.imageSrc;
+        }
+        if (!jsonContent.couple.logoSrc && jsonContent.logoSrc) {
+          jsonContent.couple.logoSrc = jsonContent.logoSrc;
         }
       }
 
