@@ -4,14 +4,23 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(10, 2, 30, 0.9);
+  background: rgba(10, 2, 30, 0.92);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   cursor: pointer;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .magical-reveal-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(10, 2, 30, 0.96);
+  }
 }
 
 .magical-particle {
@@ -30,13 +39,15 @@
   border: 1px solid rgba(232, 213, 163, 0.3);
   border-radius: 20px;
   background: rgba(232, 213, 163, 0.05);
-  box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(232, 213, 163, 0.1);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(232, 213, 163, 0.1);
 }
 
 .magical-sparkle-icon {
   font-size: 2rem;
   margin: 10px 0;
   animation: pulse-gold 2s infinite alternate;
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
 .magical-date-text {
@@ -94,8 +105,15 @@
 }
 
 @keyframes pulse-gold {
-  from { transform: scale(1); opacity: 0.5; }
-  to { transform: scale(1.2); opacity: 1; }
+  from {
+    transform: scale(1) translateZ(0);
+    opacity: 0.5;
+  }
+
+  to {
+    transform: scale(1.15) translateZ(0);
+    opacity: 1;
+  }
 }
 
 /* Instantly hide all floating controls when Save Date Modal is open */

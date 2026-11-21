@@ -49,22 +49,30 @@ const HeroSection: React.FC<HeroSectionProps> = ({ couple, hero, dates }) => {
           className="hero-logo-container"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2, delay: 0.5, ease: 'easeOut', type: 'spring', stiffness: 50 }}
+          transition={{ duration: 1.5, delay: 0.5, ease: 'easeOut' }}
         >
           <div className="logo-glow-effect" />
-          {hasLogo ? (
-            <img src={logoUrl} alt={couple.logoAlt || 'Couple Logo'} className="hero-couple-logo-white" />
-          ) : (
-            <div className="hero-couple-names-text">
-              <span className="groom-name">{couple?.groomName}</span>
-              <span className="and-symbol">&</span>
-              <span className="bride-name">{couple?.brideName}</span>
+          <div className="hero-logo-floater">
+            {hasLogo ? (
+              <img
+                src={logoUrl}
+                alt={couple.logoAlt || 'Couple Logo'}
+                className="hero-couple-logo-white"
+                decoding="async"
+                fetchPriority="high"
+              />
+            ) : (
+              <div className="hero-couple-names-text">
+                <span className="groom-name">{couple?.groomName}</span>
+                <span className="and-symbol">&</span>
+                <span className="bride-name">{couple?.brideName}</span>
+              </div>
+            )}
+            <div className="logo-sparkles">
+              <span className="logo-sparkle s1">✦</span>
+              <span className="logo-sparkle s2">✦</span>
+              <span className="logo-sparkle s3">✦</span>
             </div>
-          )}
-          <div className="logo-sparkles">
-            <span className="logo-sparkle s1">✦</span>
-            <span className="logo-sparkle s2">✦</span>
-            <span className="logo-sparkle s3">✦</span>
           </div>
         </motion.div>
 

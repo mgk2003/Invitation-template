@@ -9,13 +9,14 @@
 .meet-header {
   text-align: center;
   opacity: 0;
-  transform: translateY(30px);
-  transition: transform 1s ease-out, opacity 1s ease-out;
+  transform: translate3d(0, 24px, 0);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .meet-header.animate-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .meet-label-top {
@@ -50,13 +51,14 @@
   width: 100%;
   max-width: 600px;
   opacity: 0;
-  transform: translateY(40px);
-  transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translate3d(0, 24px, 0);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .couple-container.animate-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .couple-portrait-wrapper {
@@ -96,6 +98,8 @@
   font-size: 1.8rem;
   animation: sparkle-pulse 3s infinite alternate;
   z-index: 2;
+  will-change: transform, opacity;
+  display: inline-block;
 }
 
 .couple-sparkle.tl {
@@ -111,12 +115,12 @@
 
 @keyframes sparkle-pulse {
   from {
-    transform: scale(0.8) rotate(0deg);
+    transform: scale(0.8) rotate(0deg) translateZ(0);
     opacity: 0.5;
   }
 
   to {
-    transform: scale(1.2) rotate(45deg);
+    transform: scale(1.15) rotate(45deg) translateZ(0);
     opacity: 1;
   }
 }

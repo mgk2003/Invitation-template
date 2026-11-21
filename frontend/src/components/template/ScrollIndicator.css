@@ -31,24 +31,32 @@
   justify-content: center;
   align-items: center;
   color: #ffffff;
-  background: rgba(10, 2, 30, 0.6);
+  background: rgba(10, 2, 30, 0.7);
   border-radius: 50%;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(232, 213, 163, 0.25);
   border: 1.5px solid rgba(232, 213, 163, 0.45);
   animation: scroll-bounce 2s infinite ease-in-out;
+  will-change: transform;
 }
 
 @keyframes scroll-bounce {
-
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 
   50% {
-    transform: translateY(6px);
+    transform: translate3d(0, 6px, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .scroll-final-chevron {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(10, 2, 30, 0.94);
   }
 }
 

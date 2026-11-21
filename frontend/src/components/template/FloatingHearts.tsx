@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './FloatingHearts.css';
 
 interface Heart {
@@ -12,7 +12,23 @@ interface Heart {
 }
 
 const FloatingHearts: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [hearts, setHearts] = useState<Heart[]>([]);
+  const [isInView, setIsInView] = useState(true);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const colors = ['#d4af37', '#e8d5a3', '#f3e5ab', '#c0c0c0', '#e0e0e0', '#ffffff'];
@@ -33,7 +49,10 @@ const FloatingHearts: React.FC = () => {
   }, []);
 
   return (
-    <div className="floating-hearts-container">
+    <div
+      ref={containerRef}
+      className={`floating-hearts-container ${isInView ? 'is-active' : 'is-paused'}`}
+    >
       {hearts.map((heart) => (
         <div
           key={heart.id}

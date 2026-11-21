@@ -5,6 +5,8 @@ import { useAtom } from 'jotai';
 import { useDispatch } from 'react-redux';
 import { sidebarCollapsedAtom, currentUserAtom } from '../../atoms';
 import { logout } from '../../store/authSlice';
+import { invitationApi } from '../../store/services/invitationApi';
+import { authApi } from '../../store/services/authApi';
 import { supabase } from '../../lib/supabase';
 import {
   FiCompass,
@@ -34,6 +36,8 @@ export const AdminLayout: React.FC = () => {
   const handleLogout = () => {
     supabase.auth.signOut().catch(() => { });
     dispatch(logout());
+    dispatch(invitationApi.util.resetApiState());
+    dispatch(authApi.util.resetApiState());
     setCurrentUser(null);
     navigate('/admin/login');
   };

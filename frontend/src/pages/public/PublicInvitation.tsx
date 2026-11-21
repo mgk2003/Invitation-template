@@ -119,21 +119,21 @@ export const PublicInvitation: React.FC = () => {
         style={{ backgroundImage: `url(${getBackgroundImageUrl(content.backgroundImage)})` }}
       >
         <div className="desktop-phone-notch" />
-        <MusicPlayer music={content.music} />
 
-        {/* Re-open Envelope Button (Symmetrically aligned with Music Player) */}
-        {envelopeOpened && !isDateRevealOpen && (
-          <div className="envelope-reopen-fixed">
-            <button
-              type="button"
-              onClick={() => setEnvelopeOpened(false)}
-              className="envelope-reopen-btn"
-              title="Re-open Royal Envelope"
-            >
-              <span>💌</span>
-            </button>
-          </div>
-        )}
+        {/* Envelope Toggle Button (Always on the UI - Top Left) */}
+        <div className="envelope-reopen-fixed">
+          <button
+            type="button"
+            onClick={() => setEnvelopeOpened((prev) => !prev)}
+            className="envelope-reopen-btn"
+            title={envelopeOpened ? "Re-open Royal Envelope" : "Open Royal Invitation"}
+          >
+            <span>{envelopeOpened ? '💌' : '✉️'}</span>
+          </button>
+        </div>
+
+        {/* Audio Control (Always on the UI - Top Right) */}
+        <MusicPlayer music={content.music} />
 
         {/* Content scrolls over background */}
         <div className="app-content">
@@ -171,7 +171,7 @@ export const PublicInvitation: React.FC = () => {
         {!isDateRevealOpen && <ScrollIndicator />}
 
         {/* 2. Standout Interactive Guest Wishes & Du'a Burst */}
-        {envelopeOpened && !isDateRevealOpen && (
+        {envelopeOpened && (
           <BlessingReaction
             slug={slug || ''}
             initialCount={content?.wishesCount || 0}

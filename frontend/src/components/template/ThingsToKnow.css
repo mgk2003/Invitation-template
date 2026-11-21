@@ -12,14 +12,15 @@
   width: 100%;
   max-width: 600px;
   opacity: 0;
-  transform: translateY(30px);
-  transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translate3d(0, 24px, 0);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
   margin-bottom: 20px;
 }
 
 .things-header.animate-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .things-top-label {
@@ -72,13 +73,14 @@
   padding: 25px;
   background: transparent;
   opacity: 0;
-  transform: translateY(30px);
+  transform: translate3d(0, 24px, 0);
   transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .tip-card.animate-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .tip-card:hover {
@@ -168,13 +170,14 @@
   flex-direction: column;
   gap: 25px;
   opacity: 0;
-  transform: translateY(30px);
-  transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+  transform: translate3d(0, 24px, 0);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .instagram-premium-card.animate-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .insta-header {
@@ -237,6 +240,7 @@
     flex-direction: row;
     align-items: stretch;
   }
+
   .instagram-premium-card {
     flex: 1;
     max-width: 450px;

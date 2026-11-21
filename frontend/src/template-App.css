@@ -15,13 +15,25 @@
   max-width: 540px;
   margin: 0 auto;
   min-height: 100vh;
-  background-image: url('/assets/background_1.png');
+  background-image: url('/assets/background_1.webp');
   background-size: 100% auto;
   background-position: center top;
   background-repeat: no-repeat;
   background-color: #0a021e;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Off-screen section virtualization for smooth 60fps scrolling on budget devices */
+.invite-section,
+.events-section,
+.meet-section,
+.message-section,
+.things-section,
+.countdown-section,
+.footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 550px;
 }
 
 .app-content {
@@ -99,7 +111,7 @@
   position: fixed;
   top: 30px;
   left: 20px;
-  z-index: 10000;
+  z-index: 10005;
 }
 
 .envelope-reopen-btn {
@@ -131,6 +143,12 @@
   color: #ffffff;
 }
 
+@media (max-width: 767px) {
+  .app-wrapper {
+    box-shadow: none;
+  }
+}
+
 @media (max-width: 480px) {
   .envelope-reopen-fixed {
     top: 20px;
@@ -141,5 +159,8 @@
     width: 40px;
     height: 40px;
     font-size: 1rem;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(16, 6, 40, 0.94);
   }
 }

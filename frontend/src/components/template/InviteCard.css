@@ -13,14 +13,15 @@
   background: transparent;
   text-align: center;
   opacity: 0;
-  transform: translateY(30px);
-  transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: translate3d(0, 24px, 0);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform, opacity;
   overflow: hidden;
 }
 
 .invite-card.animate-in {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 
@@ -118,19 +119,21 @@
 
 .invite-sparkle-top,
 .invite-sparkle-bottom {
+  display: inline-block;
   font-size: 1.5rem;
   color: #e8d5a3;
   animation: pulse-sparkle 3s infinite alternate;
+  will-change: transform, opacity;
 }
 
 @keyframes pulse-sparkle {
   from {
     opacity: 0.4;
-    transform: scale(0.8);
+    transform: scale(0.8) translateZ(0);
   }
 
   to {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.1) translateZ(0);
   }
 }

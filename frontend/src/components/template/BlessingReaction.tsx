@@ -7,8 +7,12 @@ interface FloatingItem {
   emoji: string;
   x: number;
   y: number;
+  driftX: number;
+  driftY: number;
+  delay: number;
   rot: number;
   rotEnd: number;
+  scale: number;
 }
 
 interface BlessingReactionProps {
@@ -16,7 +20,7 @@ interface BlessingReactionProps {
   initialCount?: number;
 }
 
-const BLESSING_EMOJIS = ['💖', '✨', '💐', '🤍', '🎉', '💍', '🌸'];
+const BLESSING_EMOJIS = ['💖', '✨', '💐', '🤍', '🎉', '💍', '🌸', '🕊️', '❤️', '💫', '🌹'];
 
 export const BlessingReaction: React.FC<BlessingReactionProps> = ({ slug, initialCount = 0 }) => {
   const [count, setCount] = useState<number>(() => {
@@ -33,6 +37,7 @@ export const BlessingReaction: React.FC<BlessingReactionProps> = ({ slug, initia
   });
 
   const [floatingItems, setFloatingItems] = useState<FloatingItem[]>([]);
+  const [isBursting, setIsBursting] = useState(false);
 
   useEffect(() => {
     if (typeof initialCount === 'number' && initialCount > count) {
@@ -47,6 +52,8 @@ export const BlessingReaction: React.FC<BlessingReactionProps> = ({ slug, initia
 
     const newCount = count + 1;
     setCount(newCount);
+    setIsBursting(true);
+    setTimeout(() => setIsBursting(false), 450);
 
     try {
       const localKey = slug ? `wedding_wishes_${slug}` : 'wedding_blessing_count';
@@ -71,22 +78,30 @@ export const BlessingReaction: React.FC<BlessingReactionProps> = ({ slug, initia
       }
     }
 
-    // Spawn 4-6 bursting emojis
+    // Spawn 7 romantic cascading bursting emojis fanning outwards
     const newItems: FloatingItem[] = [];
-    const burstCount = 5;
+    const burstCount = 7;
     for (let i = 0; i < burstCount; i++) {
       const emoji = BLESSING_EMOJIS[Math.floor(Math.random() * BLESSING_EMOJIS.length)];
-      const offsetX = (Math.random() - 0.5) * 80;
-      const rot = (Math.random() - 0.5) * 40;
-      const rotEnd = (Math.random() - 0.5) * 70;
+      const spread = i - (burstCount - 1) / 2;
+      const driftX = spread * 24 + (Math.random() - 0.5) * 30;
+      const driftY = -(260 + Math.random() * 120);
+      const delay = i * 0.06;
+      const rot = (Math.random() - 0.5) * 30;
+      const rotEnd = (Math.random() - 0.5) * 60;
+      const scale = 0.95 + Math.random() * 0.45;
 
       newItems.push({
         id: Date.now() + Math.random(),
         emoji,
-        x: originX + offsetX,
+        x: originX,
         y: originY,
+        driftX,
+        driftY,
+        delay,
         rot,
         rotEnd,
+        scale,
       });
     }
 
@@ -95,7 +110,7 @@ export const BlessingReaction: React.FC<BlessingReactionProps> = ({ slug, initia
     // Clean up after animation
     setTimeout(() => {
       setFloatingItems((prev) => prev.filter((item) => !newItems.some((n) => n.id === item.id)));
-    }, 2500);
+    }, 2600);
   };
 
   return (
@@ -104,7 +119,7 @@ export const BlessingReaction: React.FC<BlessingReactionProps> = ({ slug, initia
         <button
           type="button"
           onClick={handleSendBlessing}
-          className="blessing-trigger-btn"
+          className={`blessing-trigger-btn ${isBursting ? 'is-bursting' : ''}`}
           title="Send warm wishes & du'a to the couple"
         >
           <span className="blessing-btn-icon">💖</span>
@@ -121,8 +136,12 @@ export const BlessingReaction: React.FC<BlessingReactionProps> = ({ slug, initia
             {
               left: `${item.x}px`,
               top: `${item.y}px`,
+              '--drift-x': `${item.driftX}px`,
+              '--drift-y': `${item.driftY}px`,
+              '--delay': `${item.delay}s`,
               '--rot': `${item.rot}deg`,
               '--rot-end': `${item.rotEnd}deg`,
+              '--scale': item.scale,
             } as React.CSSProperties
           }
         >

@@ -36,13 +36,13 @@ export const RoyalEnvelope: React.FC<RoyalEnvelopeProps> = ({ couple, dates, onO
       >
         {/* Ambient Floating Stardust */}
         <div className="royal-stardust-container">
-          {[...Array(18)].map((_, i) => (
+          {[...Array(10)].map((_, i) => (
             <div
               key={i}
               className="royal-stardust-particle"
               style={{
-                left: `${(i * 19) % 100}%`,
-                animationDelay: `${(i * 0.45) % 6}s`,
+                left: `${(i * 21) % 100}%`,
+                animationDelay: `${(i * 0.6) % 6}s`,
                 animationDuration: `${6 + (i % 4)}s`,
               }}
             />

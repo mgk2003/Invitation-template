@@ -403,7 +403,6 @@ export const AdminDashboard: React.FC = () => {
                     Bride & Groom {renderSortIndicator('couple')}
                   </th>
                   {isSuperAdmin && <th className="py-4 px-6">Assigned Admin</th>}
-                  <th className="py-4 px-6">Slug</th>
                   <th
                     className="py-4 px-6 cursor-pointer hover:text-white transition-colors"
                     onClick={() => handleSort('weddingDate')}
@@ -459,13 +458,6 @@ export const AdminDashboard: React.FC = () => {
                             )}
                           </td>
                         )}
-
-                        {/* Slug */}
-                        <td className="py-4.5 px-6">
-                          <span className="bg-zinc-800 text-zinc-300 border border-zinc-700 px-2.5 py-1 rounded-lg font-mono text-xs">
-                            /{record.slug}
-                          </span>
-                        </td>
 
                         {/* Wedding Date */}
                         <td className="py-4.5 px-6 text-sm">

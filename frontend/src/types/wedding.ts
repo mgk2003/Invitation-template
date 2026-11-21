@@ -133,42 +133,44 @@ export const BACKGROUND_OPTIONS: BackgroundOption[] = [
     name: 'Theme 1: Royal Heritage & Golden Radiance',
     tagline: 'Traditional Auspicious Grandeur',
     description: 'Opulent traditional celebration featuring warm golden mandap aura, sacred ceremonial motifs, and festive royal grace.',
-    src: '/assets/background_1.png',
-    previewSrc: '/assets/preview_1.jpg',
+    src: '/assets/background_1.webp',
+    previewSrc: '/assets/preview_1.webp',
   },
   {
     id: 'background_2',
     name: 'Theme 2: Ethereal Grace & Floral Serenade',
     tagline: 'Timeless Romance & Classic Ivory',
     description: 'Subtle pastel sophistication adorned with delicate floral botanicals, gentle candlelight radiance, and pure eternal elegance.',
-    src: '/assets/background_2.png',
-    previewSrc: '/assets/preview_2.jpg',
+    src: '/assets/background_2.webp',
+    previewSrc: '/assets/preview_2.webp',
   },
   {
     id: 'background_3',
     name: 'Theme 3: Majestic Twilight & Crescent Splendor',
     tagline: 'Regal Nocturnal Charm & Jewel Tones',
     description: 'Grand evening festivities illuminated by shimmering celestial stars, opulent jewel-toned velvet textures, and luminous celebration aura.',
-    src: '/assets/background_3.png',
-    previewSrc: '/assets/preview_3.jpg',
+    src: '/assets/background_3.webp',
+    previewSrc: '/assets/preview_3.webp',
   },
   {
     id: 'background_4',
     name: 'Theme 4: Sunset Serenade & Coastal Splendor',
     tagline: 'Warm Romantic Sunset & Floral Horizon',
     description: 'Breathtaking sunset hues of warm coral, twilight sky, and tranquil coastal vistas framing a picturesque, unforgettable celebration.',
-    src: '/assets/background_4.png',
-    previewSrc: '/assets/preview_4.png',
+    src: '/assets/background_4.webp',
+    previewSrc: '/assets/preview_4.webp',
   },
 ];
 
 export const getBackgroundImageUrl = (bgId?: string): string => {
-  if (!bgId) return '/assets/background_1.png';
+  if (!bgId) return '/assets/background_1.webp';
   const matched = BACKGROUND_OPTIONS.find((opt) => opt.id === bgId);
   if (matched) return matched.src;
-  if (bgId.startsWith('/') || bgId.startsWith('http')) return bgId;
-  if (bgId.endsWith('.png') || bgId.endsWith('.jpg') || bgId.endsWith('.webp')) {
-    return `/assets/${bgId}`;
+  if (bgId.startsWith('/') || bgId.startsWith('http')) {
+    return bgId.replace(/\.(png|jpg)$/i, '.webp');
   }
-  return `/assets/${bgId}.png`;
+  if (bgId.endsWith('.png') || bgId.endsWith('.jpg') || bgId.endsWith('.webp')) {
+    return `/assets/${bgId.replace(/\.(png|jpg)$/i, '.webp')}`;
+  }
+  return `/assets/${bgId}.webp`;
 };

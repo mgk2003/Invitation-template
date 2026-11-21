@@ -30,7 +30,13 @@ const MeetSection: React.FC<MeetSectionProps> = ({ couple, meetSection }) => {
         <div className="couple-portrait-wrapper">
           <div className="couple-frame-gold">
             <div className="couple-inner">
-              <img src={photoUrl} alt={couple.photoAlt} className="couple-photo" />
+              <img
+                src={photoUrl}
+                alt={couple.photoAlt || 'Couple Portrait'}
+                className="couple-photo"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
           <div className="couple-sparkle tl">✦</div>

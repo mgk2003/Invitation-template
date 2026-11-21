@@ -2,7 +2,7 @@
   position: fixed;
   top: 30px;
   right: 20px;
-  z-index: 10000;
+  z-index: 10005;
 }
 
 .music-toggle-btn {
@@ -59,17 +59,35 @@
 
 .bar {
   width: 2px;
+  height: 12px;
   background: #e8d5a3;
   border-radius: 1px;
+  transform-origin: bottom;
+  will-change: transform, opacity;
 }
 
-.bar.b1 { height: 6px; animation: bar-dance 0.6s infinite alternate; }
-.bar.b2 { height: 10px; animation: bar-dance 0.8s infinite alternate-reverse; }
-.bar.b3 { height: 7px; animation: bar-dance 0.7s infinite alternate 0.2s; }
+.bar.b1 {
+  animation: bar-dance 0.6s infinite alternate;
+}
+
+.bar.b2 {
+  animation: bar-dance 0.8s infinite alternate-reverse 0.1s;
+}
+
+.bar.b3 {
+  animation: bar-dance 0.7s infinite alternate 0.25s;
+}
 
 @keyframes bar-dance {
-  from { height: 2px; opacity: 0.5; }
-  to { height: 12px; opacity: 1; }
+  from {
+    transform: scaleY(0.2);
+    opacity: 0.5;
+  }
+
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
 }
 
 /* Pulse when playing */
@@ -86,8 +104,15 @@
 }
 
 @keyframes music-pulse {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(1.4); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
 }
 
 @media (max-width: 480px) {
@@ -95,8 +120,12 @@
     top: 20px;
     right: 15px;
   }
+
   .music-toggle-btn {
     width: 40px;
     height: 40px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(16, 6, 40, 0.94);
   }
 }
