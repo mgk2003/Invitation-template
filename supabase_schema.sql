@@ -406,7 +406,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 14. Row Level Security (RLS)
+-- 14. Helper Function & Row Level Security (RLS)
+-- SECURITY DEFINER function bypasses RLS on public.profiles to prevent infinite recursion
+CREATE OR REPLACE FUNCTION public.is_super_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (
+        SELECT 1 FROM public.profiles 
+        WHERE id = auth.uid() AND role = 'super_admin'
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
 ALTER TABLE public.invitations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
@@ -427,25 +438,30 @@ ON public.invitations
 FOR ALL
 TO authenticated
 USING (
-    (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'super_admin'
+    public.is_super_admin()
     OR "adminId" = auth.uid()
     OR "adminId" IS NULL
 )
 WITH CHECK (
-    (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'super_admin'
+    public.is_super_admin()
     OR "adminId" = auth.uid()
     OR "adminId" IS NULL
 );
 
--- Profiles RLS
+-- Profiles RLS (Fix 42P17: Using true for authenticated SELECT prevents self-referential subquery recursion)
 DROP POLICY IF EXISTS "Users can read own profile or super admin read all" ON public.profiles;
-CREATE POLICY "Users can read own profile or super admin read all"
+DROP POLICY IF EXISTS "Authenticated users can read profiles" ON public.profiles;
+CREATE POLICY "Authenticated users can read profiles"
 ON public.profiles FOR SELECT
 TO authenticated
-USING (
-    id = auth.uid() 
-    OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'super_admin'
-);
+USING (true);
+
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
+CREATE POLICY "Users can update own profile"
+ON public.profiles FOR UPDATE
+TO authenticated
+USING (id = auth.uid() OR public.is_super_admin())
+WITH CHECK (id = auth.uid() OR public.is_super_admin());
 
 -- 15. Storage Bucket Setup (Fail-safe wrapper)
 DO $$ BEGIN
