@@ -118,15 +118,22 @@ export const AdminLayout: React.FC = () => {
           }`}
       >
         {/* Sidebar Header */}
-        <div className="h-16 flex items-center justify-between px-5 border-b border-zinc-800/80 shrink-0">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-500 to-fuchsia-500 flex items-center justify-center text-white text-xl font-bold shrink-0 shadow-lg shadow-violet-500/20 glow-border-violet">
-              💍
-            </div>
-            {!collapsed && (
-              <span className="font-serif font-bold text-sm tracking-widest bg-gradient-to-r from-violet-200 to-indigo-200 bg-clip-text text-transparent truncate uppercase">
-                Wedding CMS
-              </span>
+        <div className="h-20 flex items-center justify-center px-4 border-b border-zinc-800/80 shrink-0">
+          <div className="flex items-center justify-center w-full overflow-hidden">
+            {!collapsed ? (
+              <img
+                src="/brand-logo.png"
+                alt="Crew Fotos"
+                className="h-[58px] w-auto max-w-[210px] object-contain drop-shadow-[0_2px_12px_rgba(255,255,255,0.14)] hover:scale-105 transition-all duration-300"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-xl bg-zinc-800/80 p-1 border border-zinc-700/50 flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
+                <img
+                  src="/brand-logo.png"
+                  alt="Crew Fotos"
+                  className="w-full h-full object-contain scale-125"
+                />
+              </div>
             )}
           </div>
         </div>
@@ -140,8 +147,8 @@ export const AdminLayout: React.FC = () => {
                 key={item.key}
                 onClick={item.onClick}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer border ${isActive
-                    ? 'bg-violet-600/10 text-violet-400 border-violet-500/20 shadow-md shadow-violet-500/5'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 border-transparent'
+                  ? 'bg-violet-600/10 text-violet-400 border-violet-500/20 shadow-md shadow-violet-500/5'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40 border-transparent'
                   }`}
               >
                 <div className="flex items-center gap-3.5">
@@ -163,8 +170,8 @@ export const AdminLayout: React.FC = () => {
               <Avatar
                 icon={<FiUser className="text-zinc-300" />}
                 className={`font-bold shadow-md flex items-center justify-center shrink-0 ${isSuperAdmin
-                    ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
-                    : 'bg-gradient-to-tr from-violet-600 to-indigo-500 text-white'
+                  ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
+                  : 'bg-gradient-to-tr from-violet-600 to-indigo-500 text-white'
                   }`}
               />
               {!collapsed && (
@@ -285,8 +292,8 @@ export const AdminLayout: React.FC = () => {
           <div className="p-3.5 mb-5 rounded-xl bg-zinc-950/60 border border-zinc-800 flex items-center gap-3">
             <Avatar
               className={`font-bold shrink-0 ${isSuperAdmin
-                  ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
-                  : 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white'
+                ? 'bg-gradient-to-tr from-amber-500 to-purple-600 text-white'
+                : 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white'
                 }`}
             >
               {(currentUser?.name || currentUser?.email || 'U')[0].toUpperCase()}
@@ -301,8 +308,8 @@ export const AdminLayout: React.FC = () => {
             </div>
             <span
               className={`px-2 py-0.5 rounded text-[11px] font-semibold border shrink-0 ${isSuperAdmin
-                  ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                  : 'bg-violet-500/10 text-violet-300 border-violet-500/30'
+                ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                : 'bg-violet-500/10 text-violet-300 border-violet-500/30'
                 }`}
             >
               {isSuperAdmin ? '👑 Super Admin' : '⚡ Admin'}

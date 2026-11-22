@@ -11,6 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import InvitationForm from './pages/admin/InvitationForm';
 import SuperAdminUsers from './pages/admin/SuperAdminUsers';
 import PublicInvitation from './pages/public/PublicInvitation';
+import LuxuryLoader from './components/loader/LuxuryLoader';
 
 // Helper to fetch user profile with role
 const fetchFullAuthUser = async (session: any): Promise<AuthUser> => {
@@ -94,14 +95,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   // While checking Supabase session, show a sleek loading state to prevent flash
   if (checkingAuth) {
-    return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-4 text-zinc-400">
-        <Spin size="large" />
-        <p className="text-xs uppercase tracking-widest font-mono text-zinc-500">
-          Verifying Admin Credentials...
-        </p>
-      </div>
-    );
+    return <LuxuryLoader tip="Verifying Admin Credentials..." fullScreen={true} variant="brand" />;
   }
 
   // If not authenticated in Supabase, redirect immediately to admin login

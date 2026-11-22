@@ -30,11 +30,22 @@ export const PublicInvitation: React.FC = () => {
 
   const [envelopeOpened, setEnvelopeOpened] = useState(false);
   const [isDateRevealOpen] = useAtom(isDateRevealOpenAtom);
+  const [minLoaderElapsed, setMinLoaderElapsed] = useState(false);
+
+  useEffect(() => {
+    // Forceful luxury splash delay (2.4s) so the brand logo and tagline are fully experienced
+    const t = setTimeout(() => {
+      setMinLoaderElapsed(true);
+    }, 2400);
+    return () => clearTimeout(t);
+  }, []);
 
   const { data: content, isLoading, isError } = useGetPublicInvitationQuery(
     { slug: slug || '', preview: isPreview },
     { skip: !slug }
   );
+
+  const showLoader = isLoading || !minLoaderElapsed;
 
   // Efficient & deduplicated visitor views tracking
   useEffect(() => {
@@ -65,11 +76,7 @@ export const PublicInvitation: React.FC = () => {
     });
   }, [slug, isPreview, Boolean(content)]);
 
-  if (isLoading) {
-    return <LuxuryLoader tip="Preparing Your Wedding Experience..." fullScreen={true} />;
-  }
-
-  if (isError || !content) {
+  if ((isError || !content) && !isLoading && minLoaderElapsed) {
     return (
       <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-6 text-center relative overflow-hidden">
         {/* Ornate Background Orbs */}
@@ -99,85 +106,106 @@ export const PublicInvitation: React.FC = () => {
 
   return (
     <div className="app-container">
-      {/* 1. Standout Royal Wax Seal Envelope Opening Ceremony */}
+      {/* Seamless Velvet Dissolve Loader Overlay */}
       <AnimatePresence>
-        {!envelopeOpened && (
-          <RoyalEnvelope
-            couple={content.couple}
-            dates={content.dates}
-            onOpen={() => setEnvelopeOpened(true)}
-          />
+        {showLoader && (
+          <motion.div
+            key="invitation-loader-screen"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+            className={`fixed inset-0 z-[10000] ${showLoader ? 'pointer-events-auto' : 'pointer-events-none'}`}
+          >
+            <LuxuryLoader fullScreen={true} />
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Luxury Desktop Background */}
-      <DesktopBackground backgroundImage={content.backgroundImage} />
+      {/* 1. Standout Royal Wax Seal Envelope Opening Ceremony */}
+      {content && (
+        <AnimatePresence>
+          {!envelopeOpened && (
+            <RoyalEnvelope
+              couple={content.couple}
+              dates={content.dates}
+              onOpen={() => setEnvelopeOpened(true)}
+            />
+          )}
+        </AnimatePresence>
+      )}
 
-      {/* Main invitation mobile mockup frame */}
-      <div
-        className="app-wrapper"
-        style={{ backgroundImage: `url(${getBackgroundImageUrl(content.backgroundImage)})` }}
-      >
-        <div className="desktop-phone-notch" />
+      {/* 2. Luxury Desktop Background & Main Content */}
+      {content && (
+        <>
+          <DesktopBackground backgroundImage={content.backgroundImage} />
 
-        {/* Envelope Toggle Button (Always on the UI - Top Left) */}
-        <div className="envelope-reopen-fixed">
-          <button
-            type="button"
-            onClick={() => setEnvelopeOpened((prev) => !prev)}
-            className="envelope-reopen-btn"
-            title={envelopeOpened ? "Re-open Royal Envelope" : "Open Royal Invitation"}
+          <div
+            className="app-wrapper"
+            style={{ backgroundImage: `url(${getBackgroundImageUrl(content.backgroundImage)})` }}
           >
-            <span>{envelopeOpened ? '💌' : '✉️'}</span>
-          </button>
-        </div>
+            <div className="desktop-phone-notch" />
 
-        {/* Audio Control (Always on the UI - Top Right) */}
-        <MusicPlayer music={content.music} />
+            {/* Envelope Toggle Button (Always on the UI - Top Left) */}
+            <div className="envelope-reopen-fixed">
+              <button
+                type="button"
+                onClick={() => setEnvelopeOpened((prev) => !prev)}
+                className="envelope-reopen-btn"
+                title={envelopeOpened ? "Re-open Envelope" : "Open Invitation"}
+              >
+                <span>{envelopeOpened ? '💌' : '✉️'}</span>
+              </button>
+            </div>
 
-        {/* Content scrolls over background */}
-        <div className="app-content">
-          <HeroSection
-            couple={content.couple}
-            hero={content.hero}
-            dates={content.dates}
-          />
-          <CeremonySpacer />
-          <InviteCard
-            couple={content.couple}
-            inviteCard={content.inviteCard}
-            dates={content.dates}
-          />
-          <EventsSection events={content.events} />
-          <MeetSection
-            couple={content.couple}
-            meetSection={content.meetSection}
-          />
-          <MessageSection
-            couple={content.couple}
-            messageSection={content.messageSection}
-          />
-          <ThingsToKnow
-            thingsToKnow={content.thingsToKnow}
-            social={content.social}
-          />
-          <CountdownSection
-            couple={content.couple}
-            countdownSection={content.countdownSection}
-            dates={content.dates}
-          />
-          <Footer footer={content.footer} couple={content.couple} />
-        </div>
-        {!isDateRevealOpen && <ScrollIndicator />}
+            {/* Audio Control (Always on the UI - Top Right) */}
+            <MusicPlayer music={content.music} />
 
-        {/* 2. Standout Interactive Guest Wishes & Du'a Burst */}
-        {envelopeOpened && (
-          <BlessingReaction
-            slug={slug || ''}
-            initialCount={content?.wishesCount || 0}
-          />
-        )}
-      </div>
+            {/* Content scrolls over background */}
+            <div className="app-content">
+              <HeroSection
+                couple={content.couple}
+                hero={content.hero}
+                dates={content.dates}
+              />
+              <CeremonySpacer />
+              <InviteCard
+                couple={content.couple}
+                inviteCard={content.inviteCard}
+                dates={content.dates}
+              />
+              <EventsSection events={content.events} />
+              <MeetSection
+                couple={content.couple}
+                meetSection={content.meetSection}
+              />
+              <MessageSection
+                couple={content.couple}
+                messageSection={content.messageSection}
+              />
+              <ThingsToKnow
+                thingsToKnow={content.thingsToKnow}
+                social={content.social}
+              />
+              <CountdownSection
+                couple={content.couple}
+                countdownSection={content.countdownSection}
+                dates={content.dates}
+              />
+              <Footer footer={content.footer} couple={content.couple} />
+            </div>
+            {!isDateRevealOpen && <ScrollIndicator />}
+
+            {/* 2. Standout Interactive Guest Wishes & Du'a Burst */}
+            {envelopeOpened && (
+              <BlessingReaction
+                slug={slug || ''}
+                initialCount={content?.wishesCount || 0}
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

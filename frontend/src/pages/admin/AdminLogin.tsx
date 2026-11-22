@@ -81,13 +81,17 @@ export const AdminLogin: React.FC = () => {
       >
         <div className="glass-panel glow-border-violet shadow-2xl rounded-3xl p-8 transition-all">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-tr from-violet-600 via-indigo-500 to-fuchsia-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg shadow-violet-500/30 transform rotate-3 glow-border-violet">
-              💍
+            <div className="flex items-center justify-center mx-auto mb-4">
+              <img
+                src="/brand-logo.png"
+                alt="Crew Fotos"
+                className="h-16 w-auto max-w-[240px] object-contain drop-shadow-[0_4px_18px_rgba(255,255,255,0.15)] transform hover:scale-105 transition-all"
+              />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-white font-serif bg-gradient-to-r from-violet-400 via-indigo-300 to-fuchsia-400 bg-clip-text text-transparent mb-1">
-              Wedding CMS
+            <h1 className="text-xl font-bold tracking-tight text-white font-serif bg-gradient-to-r from-violet-200 via-indigo-200 to-fuchsia-200 bg-clip-text text-transparent mb-1">
+              Crew Fotos CMS
             </h1>
-            <p className="text-xs text-zinc-450 uppercase tracking-widest font-semibold font-mono">
+            <p className="text-xs text-zinc-400 uppercase tracking-widest font-semibold font-mono">
               Admin Portal
             </p>
           </div>

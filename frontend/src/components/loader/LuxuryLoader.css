@@ -1,0 +1,191 @@
+/* ============================================================
+   CREW FOTOS — ULTRA-SLEEK MODERN LUXURY BRAND LOADER
+   Minimalist & Contemporary: Pure Logo & Luminous Halo
+   Only "MEMORIES IN A SNAP" Brand Tagline (Zero-Flicker)
+   ============================================================ */
+
+.luxury-loader-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #18092e 0%, #0c0317 60%, #05010a 100%);
+  padding: 24px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.luxury-loader-inline {
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.luxury-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Central Stage for Camera Logo */
+.luxury-brand-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+}
+
+/* Ambient Diffused Lens Bloom / Halo */
+.luxury-brand-halo {
+  position: absolute;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 213, 163, 0.22) 0%, rgba(147, 51, 234, 0.12) 50%, transparent 72%);
+  filter: blur(24px);
+  animation: modern-sleek-halo 3s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes modern-sleek-halo {
+
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.45;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+  }
+}
+
+/* Brand Logo Image Wrapper & Interactive Link */
+.luxury-brand-logo-wrap {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.luxury-brand-logo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.luxury-brand-logo-link:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 16px rgba(254, 240, 138, 0.6));
+}
+
+.luxury-brand-logo-img {
+  height: 64px;
+  width: auto;
+  max-width: 210px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 20px rgba(232, 213, 163, 0.3));
+  animation: modern-sleek-breathe 2.8s infinite ease-in-out;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes modern-sleek-breathe {
+
+  0%,
+  100% {
+    transform: scale(0.98);
+    opacity: 0.92;
+  }
+
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+    filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 28px rgba(254, 240, 138, 0.5));
+  }
+}
+
+/* Modern Minimalist Hairline Progress Beam */
+.luxury-beam-track {
+  width: 80px;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 18px;
+}
+
+.luxury-beam-runner {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 38px;
+  background: linear-gradient(90deg, transparent, rgba(232, 213, 163, 0.95), #ffffff, rgba(232, 213, 163, 0.95), transparent);
+  border-radius: 9999px;
+  animation: modern-sleek-beam 1.8s infinite ease-in-out;
+  box-shadow: 0 0 8px rgba(232, 213, 163, 0.7);
+}
+
+@keyframes modern-sleek-beam {
+  0% {
+    left: -50%;
+  }
+
+  50% {
+    left: 100%;
+  }
+
+  100% {
+    left: -50%;
+  }
+}
+
+/* Modern Sleek Brand Tagline: "MEMORIES IN A SNAP"
+   Pure CSS zero-flicker keyframe animation with initial opacity: 0 */
+.luxury-loader-tagline {
+  margin: 16px 0 0 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(232, 213, 163, 0.82);
+  text-align: center;
+  text-indent: 0.34em;
+  /* compensates for trailing letter-spacing */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 12px rgba(232, 213, 163, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: sleek-tagline-appear 1.4s 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sleek-tagline-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  100% {
+    opacity: 0.92;
+    transform: translateY(0);
+  }
+}

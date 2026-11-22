@@ -6,6 +6,7 @@ import {
   FiUserPlus,
   FiShield,
   FiMail,
+  FiCalendar,
   FiFileText,
   FiKey,
   FiUser,

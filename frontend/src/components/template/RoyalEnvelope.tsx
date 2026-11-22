@@ -65,11 +65,11 @@ export const RoyalEnvelope: React.FC<RoyalEnvelopeProps> = ({ couple, dates, onO
 
             {/* Header Content */}
             <div className="royal-invitation-badge">
-              ✦ Royal Wedding Invitation ✦
+              ✦ Wedding Invitation ✦
             </div>
 
             <div className="royal-envelope-subtitle">
-              Together With Their Families
+              Together With Our Families
             </div>
 
             <div className="royal-envelope-couple-names">

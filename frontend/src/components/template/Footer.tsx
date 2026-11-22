@@ -1,6 +1,7 @@
 import React from 'react';
 import './Footer.css';
 import type { WeddingContent } from '../../content';
+import { brandName, instagramUrl } from '../../config';
 
 interface FooterProps {
   footer: WeddingContent['footer'];
@@ -21,7 +22,26 @@ const Footer: React.FC<FooterProps> = ({ footer, couple }) => {
           </div>
         )}
         <div className="footer-divider-magical" />
-        <p className="footer-copy">© {footer.credit} {currentYear}</p>
+
+        {/* Static Brand Logo with Instagram Navigation */}
+        <div className="footer-brand-wrapper">
+          <a
+            href={instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-brand-link"
+            title={`Follow ${brandName} on Instagram`}
+          >
+            <img
+              src="/brand-logo.png"
+              alt={brandName}
+              className="footer-brand-logo"
+              loading="lazy"
+            />
+          </a>
+        </div>
+
+        <p className="footer-copy">© {footer?.credit || brandName} {currentYear}</p>
       </div>
     </footer>
   );

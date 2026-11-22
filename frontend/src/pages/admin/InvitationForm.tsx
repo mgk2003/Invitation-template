@@ -16,6 +16,7 @@ import {
 import { currentUserAtom } from '../../atoms';
 import LuxuryLoader from '../../components/loader/LuxuryLoader';
 import { showApiErrorModal } from '../../utils/showApiErrorModal';
+import { brandName } from '../../config';
 import AppInput from '../../components/common/AppInput';
 import { BACKGROUND_OPTIONS, BackgroundOption } from '../../types/wedding';
 import {
@@ -351,6 +352,8 @@ export const InvitationForm: React.FC = () => {
       ['thingsToKnow', 'title'],
       ['thingsToKnow', 'description'],
       ['thingsToKnow', 'surpriseMessage'],
+      ['social', 'instagramHandle'],
+      ['social', 'instagramLink'],
       ['footer', 'credit'],
     ];
 
@@ -391,7 +394,11 @@ export const InvitationForm: React.FC = () => {
         ['countdownSection', 'gettingMarriedText'], ['countdownSection', 'message']
       ],
       tips: [['thingsToKnow', 'labelTop'], ['thingsToKnow', 'title'], ['thingsToKnow', 'description'], ['thingsToKnow', 'surpriseMessage']],
-      social: [['footer', 'credit']],
+      social: [
+        ['social', 'instagramHandle'],
+        ['social', 'instagramLink'],
+        ['footer', 'credit'],
+      ],
     };
 
     tabs.forEach((tab) => {
@@ -505,6 +512,10 @@ export const InvitationForm: React.FC = () => {
       const formattedValues = {
         ...existingData,
         backgroundImage: existingData.backgroundImage || 'background_1',
+        footer: {
+          ...existingData.footer,
+          credit: existingData.footer?.credit || brandName,
+        },
         dates: {
           ...existingData.dates,
           weddingDatetime: existingData.dates?.weddingDatetime
@@ -516,7 +527,12 @@ export const InvitationForm: React.FC = () => {
       calculateProgressAndStatuses(formattedValues);
     } else if (!isEdit) {
       form.resetFields();
-      form.setFieldsValue({ backgroundImage: 'background_1' });
+      form.setFieldsValue({
+        backgroundImage: 'background_1',
+        footer: {
+          credit: brandName,
+        },
+      });
       calculateProgressAndStatuses(form.getFieldsValue(true));
     }
   }, [existingData, isEdit, form]);
@@ -1113,6 +1129,10 @@ export const InvitationForm: React.FC = () => {
         form={form}
         layout="vertical"
         preserve={true}
+        initialValues={{
+          backgroundImage: 'background_1',
+          footer: { credit: brandName },
+        }}
         onValuesChange={(_, allValues) => calculateProgressAndStatuses(allValues)}
         onFieldsChange={() => {
           calculateProgressAndStatuses(form.getFieldsValue(true));
@@ -1745,8 +1765,9 @@ export const InvitationForm: React.FC = () => {
                     name={['footer', 'credit']}
                     label={<span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Footer Credits</span>}
                     rules={[{ required: true, message: 'Footer credits are required' }]}
+                    initialValue={brandName}
                   >
-                    <AppInput type="text" placeholder="e.g. WITH LOVE, THE FAMILIES" />
+                    <AppInput type="text" placeholder={`e.g. ${brandName}`} />
                   </Form.Item>
 
                   <Form.Item
