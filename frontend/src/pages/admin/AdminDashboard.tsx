@@ -389,8 +389,8 @@ export const AdminDashboard: React.FC = () => {
         {(search || statusFilter || dateFilter[0] || dateFilter[1] || selectedAdminId) && (
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-800/60">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-zinc-400">Active filters:</span>
-              {selectedAdminId && (
+              {selectedAdminId && (<>
+                <span className="text-xs text-zinc-400">Active filters:</span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-violet-500/10 text-violet-300 border border-violet-500/30">
                   <span>
                     Admin: {adminList.find((a) => a.id === selectedAdminId)?.name || adminList.find((a) => a.id === selectedAdminId)?.email || 'Filtered'}
@@ -409,7 +409,7 @@ export const AdminDashboard: React.FC = () => {
                   >
                     <FiX className="text-xs" />
                   </button>
-                </span>
+                </span></>
               )}
             </div>
             <button
